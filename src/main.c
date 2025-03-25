@@ -16,19 +16,26 @@ int main() {
 #pragma region Criar 
     //Criar uma lista
     Elemento *inicio = NULL;
-    
+
+    inicio = LerElementosFicheiro("antenas.txt");
+    bool mostrarLista = ListarMatriz(inicio);
+
+    /*
     //Criar um elemento para a lista
-    Elemento *e1 = CriaElemento('A',1,2);
+    Elemento *antena = CriaElemento('A',1,2);
 
     //Inserir o elemento criado para a lista
-    inicio = InsereOrdenado(inicio,e1);
+    inicio = InsereOrdenado(inicio,antena);
 
-    e1 = CriaElemento('A',4,4);
+    antena = CriaElemento('A',4,4);
+    inicio = InsereOrdenado(inicio,antena);
 
-    inicio = InsereOrdenado(inicio,e1);
+    antena = CriaElemento('B',2,1);
+    inicio = InsereOrdenado(inicio,antena);
+    */
 
 #pragma endregion
-
+/*
 #pragma region Remover
 
     inicio = RemoverElemento(inicio,4,4);
@@ -41,5 +48,7 @@ int main() {
 
 #pragma endregion
 
+    bool gravar = GravarElementoFicheiro("antenas.txt", inicio);
+*/
     return 0;
 }

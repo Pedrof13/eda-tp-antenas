@@ -187,7 +187,13 @@ Elemento *RemoverElemento(Elemento *inicio, int l, int c) {
     return inicio;
 }
 
-
+/**
+ * @brief 
+ * 
+ * @param inicio 
+ * @return true 
+ * @return false 
+ */
 bool ListarMatriz(Elemento *inicio) {
 
     //Se a lista estiver vazia não mostra nada na consola
@@ -217,4 +223,104 @@ bool ListarMatriz(Elemento *inicio) {
     }
 
     return true;
+}
+
+/**
+ * @brief 
+ * 
+ * @param nomeFicheiro 
+ * @param inicio 
+ * @return true 
+ * @return false 
+ */
+bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio) {
+
+    FILE *fp;//file point
+
+    //Verificar se a lista está vazia
+    if(inicio == NULL) return false;
+
+    fp = fopen(nomeFicheiro, "wt");
+
+    if(fp !=NULL) 
+    {
+        Elemento *aux = inicio;
+
+        while(aux->p != NULL) 
+        {
+        for(int l=0; l < LINHA; l=l+1) {
+
+            for(int c=0; c < COLUNA; c=c+1) {
+                if(aux->l == l && aux->c == c && aux != NULL) 
+                {
+                    fprintf(fp,"%c", aux->tipo);
+
+                    //Passa para o próximo elemento
+                    if(aux->p !=NULL) aux = aux->p;
+
+                }
+                else 
+                {
+                    fprintf(fp,".");
+                }
+
+            }
+            fprintf(fp,"\n");
+        }
+        
+        }
+
+        fclose(fp);
+        return true;
+
+    }
+    else {
+        return false;
+    }
+
+}
+
+/**
+ * @brief 
+ * 
+ * @param nomeFicheiro 
+ * @return Elemento* 
+ */
+Elemento *LerElementosFicheiro(char* nomeFicheiro) {
+
+    FILE *fp;//file point
+    Elemento *inicio = NULL;
+    Elemento *aux;
+
+    fp = fopen(nomeFicheiro, "rt");
+
+    if(fp != NULL) 
+    {
+        ElementFile auxElemento[LINHA];// array de elementos
+        
+        while(!feof(fp)) {
+
+            for(int l=0; l < LINHA; l=l+1) {
+                fscanf(fp, "%c%c%c%c%c\n", 
+                &auxElemento[0].tipo, &auxElemento[1].tipo, &auxElemento[2].tipo, &auxElemento[3].tipo, &auxElemento[4].tipo);
+
+                for(int c=0; c < COLUNA; c=c+1) {
+                    if(auxElemento[c].tipo != '.') {
+                        aux = CriaElemento(auxElemento[c].tipo,l,c);
+                        inicio = InsereOrdenado(inicio,aux);
+                    }
+                
+                }
+            }
+
+            
+        }
+        fclose(fp);
+        return inicio;
+
+    }
+    else {
+        return NULL;
+    }
+
 }

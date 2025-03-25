@@ -27,3 +27,12 @@ typedef struct Elemento
     int l,c;//coordenadas da matriz
     struct Elemento *p;//apontador para o próximo elemento da lista
 }Elemento;
+
+/**
+ * @brief 
+ * 
+ */
+typedef struct ElementoFile {
+	char tipo;
+    int l,c;
+}ElementFile;
