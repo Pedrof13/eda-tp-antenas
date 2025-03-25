@@ -22,3 +22,9 @@ Elemento *InsereOrdenado(Elemento *inicio, Elemento *novo);
 Elemento *ProcurarElemento(Elemento *inicio, int l, int c);
 
 Elemento *RemoverElemento(Elemento *inicio, int l, int c);
+
+bool ListarMatriz(Elemento *inicio);
+
+bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio);
+
+Elemento *LerElementosFicheiro(char* nomeFicheiro);

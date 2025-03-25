@@ -186,3 +186,35 @@ Elemento *RemoverElemento(Elemento *inicio, int l, int c) {
 
     return inicio;
 }
+
+
+bool ListarMatriz(Elemento *inicio) {
+
+    //Se a lista estiver vazia não mostra nada na consola
+    if(inicio == NULL) return false;
+    
+    Elemento *aux = inicio;
+
+    //Percorrer a "matriz"
+    for(int l=0; l < LINHA; l=l+1) {
+
+        for(int c=0; c < COLUNA; c=c+1) {
+
+            if(aux->l == l && aux->c == c && aux != NULL) 
+            {
+                //Mostra na consola
+                printf("%c", aux->tipo);
+
+                //Passa para o próximo elemento
+                if(aux->p !=NULL) aux = aux->p;
+            }
+            else {
+                printf(".");
+            }
+        }
+        //Muda de linha
+        printf("\n");
+    }
+
+    return true;
+}

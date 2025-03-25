@@ -13,6 +13,10 @@
 #include <malloc.h>
 #include <stdbool.h>
 
+//dimensão matriz
+#define LINHA 5
+#define COLUNA 5
+
 /**
  * @brief Estrutura que representa um elemento da lista
  * 
