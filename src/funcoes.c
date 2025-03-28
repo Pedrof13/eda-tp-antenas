@@ -194,7 +194,7 @@ Elemento *RemoverElemento(Elemento *inicio, int l, int c) {
  * @return true 
  * @return false 
  */
-bool ListarMatriz(Elemento *inicio) {
+bool ListarMatriz(Elemento *inicio, Tamanho* matriz) {
 
     //Se a lista estiver vazia não mostra nada na consola
     if(inicio == NULL) return false;
@@ -202,9 +202,9 @@ bool ListarMatriz(Elemento *inicio) {
     Elemento *aux = inicio;
 
     //Percorrer a "matriz"
-    for(int l=0; l < LINHA; l=l+1) {
+    for(int l=0; l < matriz->nLinhas; l=l+1) {
 
-        for(int c=0; c < COLUNA; c=c+1) {
+        for(int c=0; c < matriz->nColunas; c=c+1) {
 
             if(aux->l == l && aux->c == c && aux != NULL) 
             {
@@ -233,7 +233,7 @@ bool ListarMatriz(Elemento *inicio) {
  * @return true 
  * @return false 
  */
-bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio) {
+bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio, Tamanho* matriz) {
 
     FILE *fp;//file point
 
@@ -242,21 +242,24 @@ bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio) {
 
     fp = fopen(nomeFicheiro, "wt");
 
+    bool acabou = false;
+
     if(fp !=NULL) 
     {
         Elemento *aux = inicio;
 
-        while(aux->p != NULL) 
+        while(acabou!=true) 
         {
-        for(int l=0; l < LINHA; l=l+1) {
+        for(int l=0; l < matriz->nLinhas; l=l+1) {
 
-            for(int c=0; c < COLUNA; c=c+1) {
-                if(aux->l == l && aux->c == c && aux != NULL) 
+            for(int c=0; c < matriz->nColunas; c=c+1) {
+                if(aux->l == l && aux->c == c) 
                 {
                     fprintf(fp,"%c", aux->tipo);
 
                     //Passa para o próximo elemento
                     if(aux->p !=NULL) aux = aux->p;
+                    else acabou=true;
 
                 }
                 else 
@@ -286,33 +289,37 @@ bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio) {
  * @param nomeFicheiro 
  * @return Elemento* 
  */
-Elemento *LerElementosFicheiro(char* nomeFicheiro) {
+Elemento *LerElementosFicheiro(char* nomeFicheiro, Tamanho* matriz) {
 
     FILE *fp;//file point
-    Elemento *inicio = NULL;
-    Elemento *aux;
 
     fp = fopen(nomeFicheiro, "rt");
 
     if(fp != NULL) 
     {
-        ElementFile auxElemento[LINHA];// array de elementos
+        Elemento *inicio = NULL;
+        Elemento *aux;
         
+        char c;
+        bool PararContarColuna=false;
+
+        int auxColunas = 0;
+        //equanto não chegar ao final do ficheiro
         while(!feof(fp)) {
 
-            for(int l=0; l < LINHA; l=l+1) {
-                fscanf(fp, "%c%c%c%c%c\n", 
-                &auxElemento[0].tipo, &auxElemento[1].tipo, &auxElemento[2].tipo, &auxElemento[3].tipo, &auxElemento[4].tipo);
-
-                for(int c=0; c < COLUNA; c=c+1) {
-                    if(auxElemento[c].tipo != '.') {
-                        aux = CriaElemento(auxElemento[c].tipo,l,c);
-                        inicio = InsereOrdenado(inicio,aux);
-                    }
-                
-                }
+            c = fgetc(fp);
+            if(c != '.' && c !='#' && c != '\n') {
+                aux = CriaElemento(c,matriz->nLinhas,auxColunas);
+                inicio = InsereOrdenado(inicio,aux);
+            }
+            if (c == '\n') {
+                matriz->nLinhas++;
+                auxColunas = -1;
+                if(PararContarColuna == false) PararContarColuna = true; 
             }
 
+            if(PararContarColuna == false) matriz->nColunas++;
+            auxColunas++;
             
         }
         fclose(fp);

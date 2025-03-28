@@ -13,10 +13,6 @@
 #include <malloc.h>
 #include <stdbool.h>
 
-//dimensão matriz
-#define LINHA 5
-#define COLUNA 5
-
 /**
  * @brief Estrutura que representa um elemento da lista
  * 
@@ -29,10 +25,11 @@ typedef struct Elemento
 }Elemento;
 
 /**
- * @brief 
+ * @brief Estrutura que representa o tamanho da matriz
  * 
  */
-typedef struct ElementoFile {
-	char tipo;
-    int l,c;
-}ElementFile;
+typedef struct Tamanho {
+    int nLinhas;
+    int nColunas;
+}Tamanho;
+

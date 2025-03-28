@@ -13,14 +13,21 @@
 
 int main() {
 
-#pragma region Criar 
     //Criar uma lista
     Elemento *inicio = NULL;
+    Tamanho *matriz;
 
-    inicio = LerElementosFicheiro("antenas.txt");
-    bool mostrarLista = ListarMatriz(inicio);
+    matriz->nLinhas = 0;
+    matriz->nColunas = 0;
 
-    /*
+    inicio = LerElementosFicheiro("antenas.txt",matriz);
+    bool mostrarLista = ListarMatriz(inicio,matriz);
+
+/*
+#pragma region Criar 
+    
+
+
     //Criar um elemento para a lista
     Elemento *antena = CriaElemento('A',1,2);
 
@@ -32,10 +39,11 @@ int main() {
 
     antena = CriaElemento('B',2,1);
     inicio = InsereOrdenado(inicio,antena);
-    */
+
+
 
 #pragma endregion
-/*
+
 #pragma region Remover
 
     inicio = RemoverElemento(inicio,4,4);
@@ -44,11 +52,11 @@ int main() {
 
 #pragma region Mostar
 
-    bool mostrarLista = ListarMatriz(inicio);
+    bool mostrarLista = ListarMatriz(inicio,matriz);
 
 #pragma endregion
 
-    bool gravar = GravarElementoFicheiro("antenas.txt", inicio);
+    bool gravar = GravarElementoFicheiro("antenas.txt", inicio,matriz);
 */
     return 0;
 }

@@ -23,8 +23,9 @@ Elemento *ProcurarElemento(Elemento *inicio, int l, int c);
 
 Elemento *RemoverElemento(Elemento *inicio, int l, int c);
 
-bool ListarMatriz(Elemento *inicio);
+bool ListarMatriz(Elemento *inicio, Tamanho* matriz);
 
-bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio);
+bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio, Tamanho* matriz);
 
-Elemento *LerElementosFicheiro(char* nomeFicheiro);
+Elemento *LerElementosFicheiro(char* nomeFicheiro, Tamanho* matriz);
+
