@@ -12,7 +12,7 @@
 #include "funcoes.h"
 
 /**
- * @brief 
+ * @brief Função que cria um elemento
  * 
  * @param tipo 
  * @param l 
@@ -33,7 +33,7 @@ Elemento *CriaElemento(char tipo, int l, int c) {
 }
 
 /**
- * @brief 
+ * @brief Função que adiciona um elemento no início da lista
  * 
  * @param inicio 
  * @param novo 
@@ -47,7 +47,7 @@ Elemento *InsereInicio(Elemento *inicio, Elemento *novo) {
 }
 
 /**
- * @brief 
+ * @brief Função que adiciona um elemento no fim da lista
  * 
  * @param inicio 
  * @param novo 
@@ -68,7 +68,7 @@ Elemento *InsereFim(Elemento *inicio, Elemento *novo) {
 }
 
 /**
- * @brief 
+ * @brief Função que insere um elemento na lista de forma ordenada através das coordenadas
  * 
  * @param inicio 
  * @param novo 
@@ -116,7 +116,7 @@ Elemento *InsereOrdenado(Elemento *inicio, Elemento *novo) {
 }
 
 /**
- * @brief 
+ * @brief Função que procura um elemento em específico na lista
  * 
  * @param inicio 
  * @param l 
@@ -142,7 +142,7 @@ Elemento *ProcurarElemento(Elemento *inicio, int l, int c) {
 }
 
 /**
- * @brief 
+ * @brief Função que remove um elemento em específico da lista
  * 
  * @param inicio 
  * @param l 
@@ -188,7 +188,7 @@ Elemento *RemoverElemento(Elemento *inicio, int l, int c) {
 }
 
 /**
- * @brief 
+ * @brief Função para mostrar a lista na consola em forma de matriz
  * 
  * @param inicio 
  * @return true 
@@ -226,7 +226,7 @@ bool ListarMatriz(Elemento *inicio, Tamanho* matriz) {
 }
 
 /**
- * @brief 
+ * @brief Função para gravar a lista num ficheiro txt em forma de matriz
  * 
  * @param nomeFicheiro 
  * @param inicio 
@@ -284,7 +284,7 @@ bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio, Tamanho* matri
 }
 
 /**
- * @brief 
+ * @brief Função para ler um ficheiro txt, calcular a dimensão da matriz e guardar os elementos numa lista 
  * 
  * @param nomeFicheiro 
  * @return Elemento* 
@@ -303,12 +303,13 @@ Elemento *LerElementosFicheiro(char* nomeFicheiro, Tamanho* matriz) {
         char c;
         bool PararContarColuna=false;
 
-        int auxColunas = 0;
+        int auxColunas = 0;//indica a coluna da matriz que está atualmente
+
         //equanto não chegar ao final do ficheiro
         while(!feof(fp)) {
 
             c = fgetc(fp);
-            if(c != '.' && c !='#' && c != '\n') {
+            if(c != '.' && c !='#' && c != '\n' && c == 'A') {
                 aux = CriaElemento(c,matriz->nLinhas,auxColunas);
                 inicio = InsereOrdenado(inicio,aux);
             }
@@ -330,4 +331,55 @@ Elemento *LerElementosFicheiro(char* nomeFicheiro, Tamanho* matriz) {
         return NULL;
     }
 
+}
+
+
+Elemento *CalcularEfeitoNefasto(Elemento *inicio, Tamanho* matriz) {
+
+    //Verificar se a lista está vazia
+    if(inicio == NULL) return inicio;
+    
+    Elemento *aux = inicio;
+    Elemento *aux2 = aux;
+    bool acabou = false;
+
+    while(acabou == false) {
+
+        //Passar para a próxima posição
+        if(aux->p != NULL) 
+        {
+            aux = aux->p;
+        }
+        else 
+        {
+            acabou = true;
+        }
+
+        //Verificar se estão na mesma linha. Se é da mesma frequênica e se não é um efeito nefasto
+        if(aux2->l == aux->l && aux2 != aux && 
+        aux2->tipo != '#' && aux->tipo != '#') {
+
+            //Calcular a distancia entre as antenas
+            int distancia = aux->c - aux2->c;
+            Elemento *nefasto;
+
+            //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da dimensão da matriz
+            if((aux2->l < matriz->nLinhas && aux2->l >= 0) && ((aux2->c-distancia) < matriz->nColunas && (aux2->c-distancia) >= 0)) 
+            {
+                nefasto = CriaElemento('#',aux2->l,aux2->c-distancia);
+                inicio = InsereOrdenado(inicio,nefasto);
+                printf("Nefasto 1 = (%d,%d)\n",aux2->l,aux2->c-distancia);
+            }
+
+            if((aux->l < matriz->nLinhas && aux->l >= 0) && ((aux->c+distancia) < matriz->nColunas && (aux->c+distancia) >= 0)) 
+            {
+                nefasto = CriaElemento('#',aux->l,aux->c+distancia);
+                inicio = InsereOrdenado(inicio,nefasto);
+                printf("Nefasto 2 = (%d,%d)\n",aux->l,aux->c+distancia);
+            }
+            
+
+        }
+    }
+    return inicio;
 }

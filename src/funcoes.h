@@ -29,3 +29,4 @@ bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio, Tamanho* matri
 
 Elemento *LerElementosFicheiro(char* nomeFicheiro, Tamanho* matriz);
 
+Elemento *CalcularEfeitoNefasto(Elemento *inicio, Tamanho* matriz);
