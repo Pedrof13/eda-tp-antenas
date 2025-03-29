@@ -22,11 +22,12 @@ int main() {
 
     inicio = LerElementosFicheiro("antenas.txt",matriz);
     bool mostrarLista = ListarMatriz(inicio,matriz);
-    printf("Dimensão %dx%d\n\n",matriz->nLinhas,matriz->nColunas);
+
+    printf("\n\n");
 
     inicio = CalcularEfeitoNefasto(inicio,matriz);
     mostrarLista = ListarMatriz(inicio,matriz);
-
+    
 /*
 #pragma region Criar 
     

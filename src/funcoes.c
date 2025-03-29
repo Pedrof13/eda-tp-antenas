@@ -102,7 +102,7 @@ Elemento *InsereOrdenado(Elemento *inicio, Elemento *novo) {
     }
 
     //Verificar se chegou no fim da lista
-    if(aux->p == NULL) 
+    if(aux->l < novo->l || (aux->l == novo->l && aux->c < novo->c)) 
     {
         inicio = InsereFim(inicio,novo);
 
@@ -309,7 +309,7 @@ Elemento *LerElementosFicheiro(char* nomeFicheiro, Tamanho* matriz) {
         while(!feof(fp)) {
 
             c = fgetc(fp);
-            if(c != '.' && c !='#' && c != '\n' && c == 'A') {
+            if(c != '.' && c !='#' && c != '\n') {
                 aux = CriaElemento(c,matriz->nLinhas,auxColunas);
                 inicio = InsereOrdenado(inicio,aux);
             }
@@ -334,29 +334,218 @@ Elemento *LerElementosFicheiro(char* nomeFicheiro, Tamanho* matriz) {
 }
 
 
+/**
+ * @brief Função que calcula as coordenadas do efeito nefasto quando duas antenas estão alinhas na horizontal
+ * 
+ * @param inicio lista
+ * @param a1 antena 1
+ * @param a2 antena 2
+ * @param matriz tamanho da matriz
+ * @return true Foi aplicado o efeito nefasto
+ * @return false Não foi aplicado o efeito nefasto
+ */
+bool CalcularHorizontal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz) {
+
+    bool sucesso = false;//Feedback da função
+
+    //Calcular a distância
+    int d = a2->c - a1->c;
+
+    //Coordenadas do efeito nefasto 1
+    int LinhaNefasto = a1->l;
+    int ColunaNefasto = a1->c - d;
+
+    Elemento *EfeitoNefasto;
+
+    //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
+    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
+    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    {
+        EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
+        inicio = InsereOrdenado(inicio,EfeitoNefasto);
+        printf("Nefasto 1: (%d,%d)\n",LinhaNefasto,ColunaNefasto);
+        if(sucesso == false)sucesso = true;
+    }
+
+    //Coordenadas do efeito nefasto 2
+    LinhaNefasto = a2->l;
+    ColunaNefasto = a2->c + d;
+
+    //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
+    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
+    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    {
+        EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
+        inicio = InsereOrdenado(inicio,EfeitoNefasto);
+        printf("Nefasto 2: (%d,%d)\n",LinhaNefasto,ColunaNefasto);
+        if(sucesso == false)sucesso = true;
+    }
+
+    return sucesso;
+}
+
+/**
+ * @brief Função que calcula as coordenadas do efeito nefasto quando duas antenas estão alinhas na vertical
+ * 
+ * @param inicio lista
+ * @param a1 antena 1
+ * @param a2 antena 2
+ * @param matriz tamanho da matriz
+ * @return true Foi aplicado o efeito nefasto
+ * @return false Não foi aplicado o efeito nefasto
+ */
+bool CalcularVertical(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz) {
+
+    bool sucesso = false;//Feedback da função
+
+    //Calcular a distância
+    int d = a2->l - a1->l;
+
+    //Coordenadas do efeito nefasto 1
+    int LinhaNefasto = a1->l - d;
+    int ColunaNefasto = a1->c;
+
+    Elemento *EfeitoNefasto;
+
+    //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
+    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
+    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    {
+        EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
+        inicio = InsereOrdenado(inicio,EfeitoNefasto);
+        printf("Nefasto 1: (%d,%d)\n",LinhaNefasto,ColunaNefasto);
+        if(sucesso == false)sucesso = true;
+    }
+
+    //Coordenadas do efeito nefasto 2
+    LinhaNefasto = a2->l + d;
+    ColunaNefasto = a2->c;
+
+    //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
+    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
+    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    {
+        EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
+        inicio = InsereOrdenado(inicio,EfeitoNefasto);
+        printf("Nefasto 2: (%d,%d)\n",LinhaNefasto,ColunaNefasto);
+        if(sucesso == false)sucesso = true;
+    }
+
+    return sucesso;
+}
+
+/**
+ * @brief Função que calcula as coordenadas do efeito nefasto quando duas antenas estão alinhas na diagonal
+ * 
+ * @param inicio lista
+ * @param a1 antena 1
+ * @param a2 antena 2
+ * @param matriz tamanho da matriz
+ * @return true Foi aplicado o efeito nefasto
+ * @return false Não foi aplicado o efeito nefasto
+ */
+bool CalcularDiagonal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz) {
+
+    bool sucesso = false;//Feedback da função
+
+    //Calcular a distância
+    int d = a2->c - a1->c;
+
+    //Coordenadas do efeito nefasto 1
+    int LinhaNefasto = a1->l - d;
+    int ColunaNefasto = a1->c -d;
+
+    Elemento *EfeitoNefasto;
+
+    //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
+    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
+    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    {
+        EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
+        inicio = InsereOrdenado(inicio,EfeitoNefasto);
+        printf("Nefasto 1: (%d,%d)\n",LinhaNefasto,ColunaNefasto);
+        if(sucesso == false)sucesso = true;
+    }
+
+    //Coordenadas do efeito nefasto 2
+    LinhaNefasto = a2->l + d;
+    ColunaNefasto = a2->c + d;
+
+    //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
+    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
+    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    {
+        EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
+        inicio = InsereOrdenado(inicio,EfeitoNefasto);
+        printf("Nefasto 2: (%d,%d)\n",LinhaNefasto,ColunaNefasto);
+        if(sucesso == false)sucesso = true;
+    }
+
+    return sucesso;
+
+}
+
 Elemento *CalcularEfeitoNefasto(Elemento *inicio, Tamanho* matriz) {
 
     //Verificar se a lista está vazia
     if(inicio == NULL) return inicio;
     
-    Elemento *aux = inicio;
-    Elemento *aux2 = aux;
+    //Elemento *aux = inicio;// atual
+    //Elemento *aux2 = aux;//anterior
+
+    //auxiliares
+    Elemento *atual = inicio;
+    Elemento *anterior = atual;
+
     bool acabou = false;
+    bool feedback = false;
 
     while(acabou == false) {
 
         //Passar para a próxima posição
-        if(aux->p != NULL) 
+        if(anterior->p != NULL) 
         {
-            aux = aux->p;
+            if(atual->p != NULL)
+            {
+                atual = atual->p;
+            }
+            else 
+            {
+                anterior = anterior->p;
+                atual = anterior;
+            }
+            
         }
         else 
         {
             acabou = true;
         }
 
+        //Verificar se é na horizontal
+        if(anterior->l == atual->l && anterior->c != atual->c && anterior != atual
+        && anterior->tipo != '#' && atual->tipo != '#')
+        {
+            feedback = CalcularHorizontal(inicio,anterior,atual,matriz);
+        }
+
+        //Verificar se é na vertical
+        if(anterior->l != atual->l && anterior->c == atual->c && anterior != atual
+        && anterior->tipo != '#' && atual->tipo != '#')
+        {
+            feedback = CalcularVertical(inicio,anterior,atual,matriz);
+        }
+
+        //Verificar se é na diagonal
+        if((anterior->c - anterior->l) == (atual->c - atual->l) && anterior != atual
+        && anterior->tipo != '#' && atual->tipo != '#')
+        {
+            feedback = CalcularDiagonal(inicio,anterior,atual,matriz);
+        }
+
+
+/*
         //Verificar se estão na mesma linha. Se é da mesma frequênica e se não é um efeito nefasto
-        if(aux2->l == aux->l && aux2 != aux && 
+        if(aux2->l == aux->l && aux2->c != aux->c && aux2 != aux && 
         aux2->tipo != '#' && aux->tipo != '#') {
 
             //Calcular a distancia entre as antenas
@@ -380,6 +569,61 @@ Elemento *CalcularEfeitoNefasto(Elemento *inicio, Tamanho* matriz) {
             
 
         }
+    
+        //Verificar se estão na mesma coluna. Se é da mesma frequênica e se não é um efeito nefasto
+        if(aux2->l != aux->l && aux2->c == aux->c && aux2 != aux && 
+        aux2->tipo != '#' && aux->tipo != '#') {
+
+            //Calcular a distancia entre as antenas
+            int distancia = aux->l - aux2->l;
+            Elemento *nefasto;
+
+            //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da dimensão da matriz
+            if(((aux2->l-distancia) < matriz->nLinhas && (aux2->l-distancia) >= 0) && (aux2->c < matriz->nColunas && aux2->c >= 0)) 
+            {
+                nefasto = CriaElemento('#',aux2->l-distancia,aux2->c);
+                inicio = InsereOrdenado(inicio,nefasto);
+                printf("Nefasto 1 = (%d,%d)\n",aux2->l - distancia,aux2->c);
+            }
+
+            if(((aux->l+distancia) < matriz->nLinhas && (aux->l+distancia) >= 0) && (aux->c < matriz->nColunas && aux->c >= 0)) 
+            {
+                nefasto = CriaElemento('#',aux->l+distancia,aux->c);
+                inicio = InsereOrdenado(inicio,nefasto);
+                printf("Nefasto 2 = (%d,%d)\n",aux->l+distancia,aux->c);
+            }
+            
+
+        }
+
+        if((aux2->c - aux2->l) == (aux->c - aux->l) && aux2 != aux &&
+        aux2->tipo != '#' && aux->tipo != '#') {
+
+            //Calcular a distancia entre as antenas
+            int distancia = aux->c - aux2->c;
+            Elemento *nefasto;
+
+             //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da dimensão da matriz
+            if(((aux2->l-distancia) < matriz->nLinhas && (aux2->l-distancia) >= 0) && ((aux2->c-distancia) < matriz->nColunas && (aux2->c-distancia) >= 0)) 
+            {
+                nefasto = CriaElemento('#',aux2->l-distancia,aux2->c-distancia);
+                inicio = InsereOrdenado(inicio,nefasto);
+                printf("Nefasto 1 = (%d,%d)\n",aux2->l - distancia,aux2->c);
+            }
+
+            if(((aux->l+distancia) < matriz->nLinhas && (aux->l+distancia) >= 0) && ((aux->c+distancia) < matriz->nColunas && (aux->c+distancia) >= 0)) 
+            {
+                nefasto = CriaElemento('#',aux->l+distancia,aux->c+distancia);
+                inicio = InsereOrdenado(inicio,nefasto);
+                printf("Nefasto 2 = (%d,%d)\n",aux->l+distancia,aux->c+distancia);
+            }
+
+
+        }*/
+
+
+
+    
     }
     return inicio;
 }

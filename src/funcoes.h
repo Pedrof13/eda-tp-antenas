@@ -29,4 +29,10 @@ bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio, Tamanho* matri
 
 Elemento *LerElementosFicheiro(char* nomeFicheiro, Tamanho* matriz);
 
+bool CalcularHorizontal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
+
+bool CalcularVertical(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
+
+bool CalcularDiagonal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
+
 Elemento *CalcularEfeitoNefasto(Elemento *inicio, Tamanho* matriz);
