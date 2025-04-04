@@ -9,59 +9,70 @@
  * 
  */
 
-#include "funcoes.h"
+#include "../include/nefasto.h"
 
 int main() {
 
-    //Criar uma lista
-    Elemento *inicio = NULL;
-    Tamanho *matriz;
+#pragma region Declarar variaveis
+    //Criar uma lista para as antenas
+    Elemento *InicioAntena = NULL;
 
+    //Criae outra lista para os efeitos nefastos
+    Elemento *InicioNefasto = NULL;
+
+    Tamanho *matriz;
+    
+    //Atribuir uma dimanesão à matriz
     matriz->nLinhas = 0;
     matriz->nColunas = 0;
 
-    inicio = LerElementosFicheiro("antenas.txt",matriz);
-    bool mostrarLista = ListarMatriz(inicio,matriz);
+    Elemento *novo;
+
+#pragma endregion
+
+    InicioAntena = LerElementosFicheiro("antenas.txt", matriz);
+
+    InicioNefasto = CalculoNefasto(InicioAntena,InicioNefasto,matriz);
+
+#pragma region Mostrar matriz
+    //Lista antena
+    bool mostra = ListarMatriz(InicioAntena,matriz);
 
     printf("\n\n");
 
-    inicio = CalcularEfeitoNefasto(inicio,matriz);
-    mostrarLista = ListarMatriz(inicio,matriz);
-    
-/*
-#pragma region Criar 
-    
-
-
-    //Criar um elemento para a lista
-    Elemento *antena = CriaElemento('A',1,2);
-
-    //Inserir o elemento criado para a lista
-    inicio = InsereOrdenado(inicio,antena);
-
-    antena = CriaElemento('A',4,4);
-    inicio = InsereOrdenado(inicio,antena);
-
-    antena = CriaElemento('B',2,1);
-    inicio = InsereOrdenado(inicio,antena);
-
-
+    //Lista nefasto
+    mostra = ListarMatriz(InicioNefasto,matriz);
 
 #pragma endregion
 
-#pragma region Remover
+#pragma region Modificar listas
+    //Remover antena
+    InicioAntena = RemoverElemento(InicioAntena,1,2);
+    //InicioAntena = RemoverElemento(InicioAntena,2,2);
 
-    inicio = RemoverElemento(inicio,4,4);
+    novo = CriaElemento('B',4,1);
+    InicioAntena = InsereOrdenado(InicioAntena,novo);
+
+    novo = CriaElemento('B',4,2);
+    InicioAntena = InsereOrdenado(InicioAntena,novo);
+
+    InicioNefasto = DestroiLista(InicioNefasto);
+
+    InicioNefasto = CalculoNefasto(InicioAntena,InicioNefasto,matriz);
 
 #pragma endregion
 
-#pragma region Mostar
+    printf("\n\n");
 
-    bool mostrarLista = ListarMatriz(inicio,matriz);
+#pragma region Mostrar
+    //Lista antena
+    mostra = ListarMatriz(InicioAntena,matriz);
 
+    printf("\n\n");
+
+    //Lista nefasto
+    mostra = ListarMatriz(InicioNefasto,matriz);
 #pragma endregion
 
-    bool gravar = GravarElementoFicheiro("antenas.txt", inicio,matriz);
-*/
     return 0;
 }

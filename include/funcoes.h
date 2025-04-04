@@ -29,10 +29,16 @@ bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio, Tamanho* matri
 
 Elemento *LerElementosFicheiro(char* nomeFicheiro, Tamanho* matriz);
 
-bool CalcularHorizontal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
+Elemento* CalcularHorizontal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
 
-bool CalcularVertical(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
+Elemento* CalcularVertical(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
 
-bool CalcularDiagonal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
+Elemento* CalcularDiagonal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
 
 Elemento *CalcularEfeitoNefasto(Elemento *inicio, Tamanho* matriz);
+
+bool GravarBinario(char* nomeFicheiro, Elemento* inicio);
+
+Elemento *LerBinario(char* nomeFicheiro);
+
+Elemento *DestroiLista(Elemento *inicio);
