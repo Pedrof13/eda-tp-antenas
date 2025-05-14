@@ -1,3 +1,5 @@
 .vscode
 src/funcoes.o
+src/nefasto.o
+src/grafo.o
 src/prog.exe

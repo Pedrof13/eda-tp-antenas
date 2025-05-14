@@ -10,9 +10,10 @@
  */
 
 #include "../include/nefasto.h"
+#include "../include/grafo.h"
 
 int main() {
-
+/* 
 #pragma region Declarar variaveis
     //Criar uma lista para as antenas
     Elemento *InicioAntena = NULL;
@@ -73,6 +74,17 @@ int main() {
     //Lista nefasto
     mostra = ListarMatriz(InicioNefasto,matriz);
 #pragma endregion
+*/
+
+//Criar uma lista
+Vertice* antenas = NULL;
+
+Vertice* a;
+
+a = CriarVertice(1,'A',1,1);
+antenas = InserirVertice(a,antenas);
+
+
 
     return 0;
 }
