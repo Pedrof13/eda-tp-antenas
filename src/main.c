@@ -76,14 +76,46 @@ int main() {
 #pragma endregion
 */
 
-//Criar uma lista
-Vertice* antenas = NULL;
+/*
+//Criar um grafo
+GR* grafo = CriarGrafo();
 
-Vertice* a;
+//Criar as antenas
+Vertice* a1;
+Vertice* a2;
+Vertice* a3;
 
-a = CriarVertice(1,'A',1,1);
-antenas = InserirVertice(a,antenas);
+#pragma region ManipularVertices
 
+a1 = CriarVertice(1,'B',0,2);
+grafo->inicio = InserirVertice(a1,grafo->inicio);
+grafo->numVertices = grafo->numVertices + 1;
+
+a2 = CriarVertice(2,'A',1,3);
+grafo->inicio = InserirVertice(a2,grafo->inicio);
+grafo->numVertices = grafo->numVertices + 1;
+
+a3 = CriarVertice(3,'A',1,2);
+grafo->inicio = InserirVertice(a3,grafo->inicio);
+grafo->numVertices = grafo->numVertices + 1;
+
+#pragma endregion
+
+
+Adjacente* adj;
+adj = CriarAdjacencia(2);
+bool ok = InserirAdjacencia(a3,adj);
+
+adj = CriarAdjacencia(3); 
+ok = InserirAdjacencia(a2,adj);
+
+ok = RemoverAdjacencia(a2,adj);
+
+ok = GravarGrafo("grafo.bin", grafo);
+*/
+
+
+GR* grafo = LerGrafo("grafo.bin");
 
 
     return 0;

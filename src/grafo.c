@@ -12,8 +12,107 @@
 #include "../include/grafo.h"
 
 /**
- * @brief Função para criar vertice
+ * @brief Função para criar adjacencia
  * 
+ * @param destino 
+ * @return Adjacente* 
+ */
+Adjacente* CriarAdjacencia(int destino) {
+    Adjacente* aux;
+    
+    aux = (Adjacente*)malloc(sizeof(Adjacente));
+
+    if(aux!=NULL) {
+        aux->destino = destino;
+        aux->next = NULL;
+    }
+    return aux;
+}
+
+/**
+ * @brief Função para inserir uma adjacencia
+ * 
+ * @param origem 
+ * @param novo 
+ * @return true 
+ * @return false 
+ */
+bool InserirAdjacencia(Vertice* origem, Adjacente* novo) {
+
+    if(novo!=NULL) {
+        novo->next = origem->next;
+        origem->next = novo;
+
+        return true; //Sucesso
+    }
+
+    return false;//Falhou
+}
+
+/**
+ * @brief Função para remover uma adjacência
+ * 
+ * @param origem 
+ * @param adj 
+ * @return true 
+ * @return false 
+ */
+bool RemoverAdjacencia(Vertice* origem, Adjacente* adj) {
+
+    //Verificar se o Vertice origem é nulo ou se a lista de adjacência está vazia
+    if(origem == NULL || origem->next == NULL) return false; //Falhou
+
+    //Verificar se a adjacência é o primeiro da lista
+    if(origem->next == adj) {
+        Adjacente *aux = origem->next;
+
+        //Verificar se adjacência é o único da lista
+        if(origem->next->next == NULL) {
+            origem->next = NULL;
+        }
+        else {
+            origem->next = origem->next->next;
+        }
+        free(aux);
+        return true;
+    }
+
+    Adjacente* atual = origem->next;
+    Adjacente* anterior = atual;
+
+    //Percorrer a lista de adjacências
+    while(atual->destino != adj->destino) {
+
+        if(atual->next != NULL) {
+            anterior = atual;
+            atual = atual->next;
+        }
+        else break;
+    }
+
+    //Verificar se encontrou a adjacência a ser removida
+    if(atual->destino == adj->destino) {
+
+        if(atual->next != NULL)
+        {
+            anterior->next = atual->next;
+        }
+        else 
+        {
+            anterior->next = NULL;
+        }
+        free(atual);
+        return true;
+    }
+
+    return false;
+}
+
+
+/**
+ * @brief Função para criar um vertice
+ * 
+ * @param id 
  * @param f 
  * @param l 
  * @param c 
@@ -21,8 +120,9 @@
  */
 Vertice* CriarVertice(int id, char f, int l, int c) {
     Vertice* aux;
-
+    
     aux = (Vertice*)malloc(sizeof(Vertice));
+    
 
     if(aux!=NULL) {
         aux->id = id;
@@ -32,7 +132,6 @@ Vertice* CriarVertice(int id, char f, int l, int c) {
         aux->next = NULL;
         aux->proximo = NULL;
     }
-
     return aux;
 }
 
@@ -44,18 +143,18 @@ Vertice* CriarVertice(int id, char f, int l, int c) {
  * @param c 
  * @return Vertice* 
  */
-Vertice* ProcurarVertice(Vertice* inicio, int l, int c) {
+Vertice* ProcurarVertice(Vertice* inicio, int id) {
 
     Vertice* aux = inicio;
 
     //Percorrer a lista
-    while(aux != NULL && (aux->l < l || (aux->l == l && aux->c < c)))
+    while(aux != NULL && aux->id != id)
     {
         aux = aux->proximo;
     }
 
     //Vertice encontrado
-    if(aux != NULL && aux->l == l && aux->c == c) return aux;
+    if(aux != NULL && aux->id == id) return aux;
 
     //Vertice não encontrado
     return NULL;
@@ -80,7 +179,7 @@ Vertice* InserirVertice(Vertice* novo, Vertice* inicio) {
     }
 
     //Verificar se já existe um Vertice com as mesmas coordenadas
-    if(ProcurarVertice(inicio,novo->l,novo->c) != NULL) 
+    if(ProcurarVertice(inicio,novo->id) != NULL) 
     {
         free(novo);
         return inicio;
@@ -90,15 +189,20 @@ Vertice* InserirVertice(Vertice* novo, Vertice* inicio) {
     Vertice* anterior = atual;
 
     //Percorrer a lista até encontrar a posição correspondente
-    while(atual->proximo != NULL &&
-    atual->l < novo->l || (atual->l == novo->l && atual->c < novo->c)) 
+    while(atual != NULL && (atual->l < novo->l || (atual->l == novo->l && atual->c < novo->c))) 
     {
-        anterior = atual;
-        atual = atual->proximo;
+        //Verificar se o próximo da lista é nulo
+        if(atual->proximo != NULL) 
+        {
+            anterior = atual;
+            atual = atual->proximo;
+        }
+        else break;//Parou o while
+        
     }
 
-    //Verificar se chegou ao fim
-    if(atual->proximo == NULL)
+    
+    if(atual->proximo == NULL && (atual->l < novo->l || (atual->l == novo->l && atual->c < novo->c)))
     {
         //Insere no fim
         atual->proximo = novo;
@@ -109,6 +213,7 @@ Vertice* InserirVertice(Vertice* novo, Vertice* inicio) {
         anterior->proximo = novo;
         novo->proximo = atual;
     }
+
 
     return inicio;
 }
@@ -123,7 +228,7 @@ Vertice* InserirVertice(Vertice* novo, Vertice* inicio) {
 Vertice* RemoverVertice(Vertice* v, Vertice* inicio) {
     
     //Verificar se a lista está vaiza ou se o vertice a ser removido não existe na lista
-    if(inicio == NULL || ProcurarVertice(inicio,v->l,v->c) == NULL) return inicio;
+    if(inicio == NULL || ProcurarVertice(inicio,v->id) == NULL) return inicio;
 
 
     //Verificar se o vértice a ser removido é o primeiro da lista
@@ -140,7 +245,7 @@ Vertice* RemoverVertice(Vertice* v, Vertice* inicio) {
         Vertice* anterior = atual;
 
         //Procurar até encontrar
-        while(atual != NULL && atual->l != v->l && atual->c != v->c)
+        while(atual != NULL && (atual->l != v->l || (atual->l == v->l && atual->c != v->c)))
         {
             anterior = atual;
             atual = atual->proximo;
@@ -153,4 +258,149 @@ Vertice* RemoverVertice(Vertice* v, Vertice* inicio) {
         return inicio;
     }
     
+}
+
+/**
+ * @brief Função para criar um grafo
+ * 
+ * @return GR* 
+ */
+GR* CriarGrafo() {
+    
+    GR* grafo;
+    grafo = (GR*)malloc(sizeof(GR));
+
+    if(grafo != NULL) {
+        grafo->numVertices = 0;
+        grafo->inicio = NULL;
+    }
+
+    return grafo;
+}
+
+/**
+ * @brief Função para gravar um grafo em fichiero binário
+ * 
+ * @param nomeFicheiro 
+ * @param grafo 
+ * @return true 
+ * @return false 
+ */
+bool GravarGrafo(char* nomeFicheiro, GR* grafo) {
+
+    FILE* fp = fopen(nomeFicheiro, "wb");
+
+    //Verificar se há erro ao abrir o ficheiro ou a lista está vazia
+    if(fp == NULL || grafo->inicio == NULL) return false;
+
+    //gravar o número de vertices
+    fwrite(&grafo->numVertices, sizeof(int), 1, fp);
+
+    //Gravar Vértices e adjacências
+    Vertice* aux = grafo->inicio;
+    VerticeFile* auxVertice;
+
+    Adjacente* Adj = NULL;
+    int numAdj = 0;
+
+    while (aux != NULL)
+    {   
+        fwrite(&aux->id, sizeof(int), 1, fp);
+        fwrite(&aux->frequencia, sizeof(char), 1, fp);
+        fwrite(&aux->l, sizeof(int), 1, fp);
+        fwrite(&aux->c, sizeof(int), 1, fp);
+        /*
+        auxVertice->id = aux->id;
+        auxVertice->frequencia = aux->frequencia;
+        auxVertice->l = aux->l;
+        auxVertice->c = aux->c;
+
+        //gravar as informações do vertice
+        fwrite(&auxVertice, sizeof(VerticeFile), 1, fp);
+        */
+        //gravar id do vertice destino
+        Adj = aux->next;
+        
+        //número de adjacências
+        numAdj = 0;
+
+        while(Adj != NULL) {
+            numAdj = numAdj + 1;
+            Adj = Adj->next;
+        }
+        fwrite(&numAdj, sizeof(int), 1, fp);
+        Adj = aux->next;
+
+        while(Adj != NULL) {
+            fwrite(&aux->next->destino, sizeof(int), 1, fp);
+            Adj = Adj->next;
+        }
+
+        aux = aux->proximo;
+        
+    }
+
+    fclose(fp);
+    return true;
+}
+
+/**
+ * @brief Função para ler um grafo em ficheiro binário
+ * 
+ * @param nomeFicheiro 
+ * @return GR* 
+ */
+GR* LerGrafo(char* nomeFicheiro) {
+    FILE* fp = fopen(nomeFicheiro, "rb");
+
+    if(fp == NULL) return NULL;
+    
+    //Criar um grafo
+    GR* grafo = CriarGrafo();
+    
+
+    fread(&grafo->numVertices, sizeof(int), 1, fp);
+
+    Vertice* aux;
+    VerticeFile* auxVertice;
+
+    Adjacente* Adj = NULL;
+    int numAdj = 0; 
+    //Percorrer os vertices
+    for(int i=0; i < grafo->numVertices; i=i+1) {
+        
+        //Ler Vertice
+        //fread(&auxVertice, sizeof(VerticeFile), 1, fp);
+        int id, l, c;
+        char f;
+
+        fread(&id, sizeof(int), 1, fp);
+        fread(&f, sizeof(char), 1, fp);
+        fread(&l, sizeof(int), 1, fp);
+        fread(&c, sizeof(int), 1, fp);
+
+        //Criar Vertice
+        aux = CriarVertice(id,f,l,c);
+        
+        //Inserir Vertice na lista
+        grafo->inicio = InserirVertice(aux,grafo->inicio);
+
+        //número de adjacências
+        int numAdj = 0;
+        Adj = aux->next;
+        bool feedback = false;
+
+        fread(&numAdj, sizeof(int), 1, fp);
+
+        for(int j=0; j < numAdj; j=j+1) {
+            int destino;
+            fread(&destino, sizeof(int), 1, fp);
+            Adj = CriarAdjacencia(destino);
+            feedback = InserirAdjacencia(aux, Adj);
+        }
+        
+    }
+
+    fclose(fp);
+    return grafo;
 }

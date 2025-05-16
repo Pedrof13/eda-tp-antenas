@@ -21,7 +21,8 @@
         struct Adjacente* next;
     }Adjacente;
 
-    //inserir, remover e alterar aresta
+    Adjacente* CriarAdjacencia(int destino);
+
 #pragma endregion
 
 
@@ -35,13 +36,20 @@
         struct Adjacente* next;
     }Vertice;
 
+    typedef struct VerticeFile {
+        int id;
+        char frequencia;
+        int l,c;
+    }VerticeFile;
+
     Vertice* CriarVertice(int id, char f, int l, int c);
-    Vertice* ProcurarVertice(Vertice* inicio, int l, int c);
+    Vertice* ProcurarVertice(Vertice* inicio, int id);
     Vertice* InserirVertice(Vertice* novo, Vertice* inicio);
     Vertice* RemoverVertice(Vertice* v, Vertice* inicio);
+
+    bool InserirAdjacencia(Vertice* origem, Adjacente* novo);
+    bool RemoverAdjacencia(Vertice* origem, Adjacente* adj);
     
-    
-    //inserir, remover e alterar vertice
 #pragma endregion
 
 #pragma region GRAFO
@@ -51,7 +59,9 @@
         Vertice* inicio;
     }GR;
 
-    //criar grafo
+    GR* CriarGrafo();
+    bool GravarGrafo(char* nomeFicheiro, GR* grafo);
+    GR* LerGrafo(char* nomeFicheiro);
     //gravar grafo em ficheiro binário
     //carregar grafo de ficheiro binário
     //Mostrar grafo
