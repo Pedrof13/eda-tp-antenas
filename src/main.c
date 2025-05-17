@@ -117,6 +117,7 @@ ok = GravarGrafo("grafo.bin", grafo);
 
 GR* grafo = LerGrafo("grafo.bin");
 
+bool ok = ProcuraEmProfundidade(grafo, 2);
 
     return 0;
 }

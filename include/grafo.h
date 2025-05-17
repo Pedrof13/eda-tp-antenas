@@ -36,12 +36,6 @@
         struct Adjacente* next;
     }Vertice;
 
-    typedef struct VerticeFile {
-        int id;
-        char frequencia;
-        int l,c;
-    }VerticeFile;
-
     Vertice* CriarVertice(int id, char f, int l, int c);
     Vertice* ProcurarVertice(Vertice* inicio, int id);
     Vertice* InserirVertice(Vertice* novo, Vertice* inicio);
@@ -62,7 +56,7 @@
     GR* CriarGrafo();
     bool GravarGrafo(char* nomeFicheiro, GR* grafo);
     GR* LerGrafo(char* nomeFicheiro);
-    //gravar grafo em ficheiro binário
-    //carregar grafo de ficheiro binário
-    //Mostrar grafo
+
+    bool ProcuraEmProfundidade(GR* grafo, int id);
+    bool dfs(Vertice* inicio, Vertice* v, bool* visitado);
 #pragma endregion
