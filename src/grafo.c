@@ -39,14 +39,30 @@ Adjacente* CriarAdjacencia(int destino) {
  */
 bool InserirAdjacencia(Vertice* origem, Adjacente* novo) {
 
-    if(novo!=NULL) {
+    //Verificar se são nulos ou se o id é igual
+    if(origem == NULL || novo == NULL || origem->id == novo->destino) return false;
+
+    //Verificar se é o primeiro da lista
+    if(origem->next == NULL) {
         novo->next = origem->next;
         origem->next = novo;
-
-        return true; //Sucesso
+        return true;
     }
 
-    return false;//Falhou
+    Adjacente* aux = origem->next;
+    while(aux!=NULL) {
+        if(aux->next != NULL) {
+            aux = aux->next;
+        }
+        else {
+            novo->next = aux->next;
+            aux->next = novo;
+            break;
+        }
+        
+    }
+
+    return true; //Sucesso
 }
 
 /**
@@ -324,8 +340,11 @@ bool GravarGrafo(char* nomeFicheiro, GR* grafo) {
         Adj = aux->next;
 
         while(Adj != NULL) {
-            fwrite(&aux->next->destino, sizeof(int), 1, fp);
-            Adj = Adj->next;
+            fwrite(&Adj->destino, sizeof(int), 1, fp);
+            
+            if(Adj->next != NULL) Adj = Adj->next;
+            else break;
+            
         }
 
         aux = aux->proximo;
@@ -409,10 +428,7 @@ bool ProcuraEmProfundidade(GR* grafo, int id) {
     if(grafo == NULL) return false;
 
     //Serve para marcar os vertices visitados na procura
-    bool* visitado;
-    visitado = (bool*)malloc(grafo->numVertices * sizeof(bool));
-
-    if(visitado == NULL) return false;
+    bool visitado[grafo->numVertices];
 
     //Inicializar todos como false
     for(int i=0; i < grafo->numVertices; i=i+1) {
@@ -423,14 +439,11 @@ bool ProcuraEmProfundidade(GR* grafo, int id) {
     if(origem != NULL) {
         printf("Antenas alcançadas a partir da antena %d: \n", id);
         bool ok = dfs(grafo->inicio,origem,visitado);
-        
-        free(visitado);
         return true;
     }
-    else {
-        free(visitado);
-        return false;
-    }
+    
+    return false;
+    
 }
 
 /**
@@ -442,18 +455,15 @@ bool ProcuraEmProfundidade(GR* grafo, int id) {
  * @return true 
  * @return false 
  */
-bool dfs(Vertice* inicio, Vertice* v, bool* visitado) {
+bool dfs(Vertice* inicio, Vertice* v, bool visitado[]) {
    
     if(v == NULL || visitado[v->id-1] == true) return false;
     
-
     visitado[v->id-1] = true;
 
     printf("Antena %d, (%d,%d)\n",v->id,v->l,v->c);
 
     Adjacente* Adj = v->next;
-    
-
     while (Adj != NULL) {
         Vertice* proximo = ProcurarVertice(inicio, Adj->destino);
         dfs(inicio,proximo,visitado);
@@ -477,10 +487,7 @@ bool ProcuraEmLargura(GR* grafo, Vertice* v) {
     if(grafo == NULL || v == NULL) return false;
 
     //Serve para marcar os vertices visitados na procura
-    bool* visitado;
-    visitado = (bool*)malloc(grafo->numVertices * sizeof(bool));
-
-    if(visitado == NULL) return false;
+    bool visitado[grafo->numVertices];
 
     //Inicializar todos como false
     for(int i=0; i < grafo->numVertices; i=i+1) {
@@ -517,7 +524,6 @@ bool ProcuraEmLargura(GR* grafo, Vertice* v) {
         }
     }
 
-    free(visitado);
     return true;
 }
 

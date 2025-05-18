@@ -58,7 +58,7 @@
     GR* LerGrafo(char* nomeFicheiro);
 
     bool ProcuraEmProfundidade(GR* grafo, int id);
-    bool dfs(Vertice* inicio, Vertice* v, bool* visitado);
+    bool dfs(Vertice* inicio, Vertice* v, bool visitado[]);
 
     bool ProcuraEmLargura(GR* grafo, Vertice* v);
 
