@@ -150,7 +150,8 @@ Vertice* ProcurarVertice(Vertice* inicio, int id) {
     //Percorrer a lista
     while(aux != NULL && aux->id != id)
     {
-        aux = aux->proximo;
+        if(aux->proximo != NULL) aux = aux->proximo;
+        else break;
     }
 
     //Vertice encontrado
@@ -265,13 +266,13 @@ Vertice* RemoverVertice(Vertice* v, Vertice* inicio) {
  * 
  * @return GR* 
  */
-GR* CriarGrafo() {
+GR* CriarGrafo(int numVertices) {
     
     GR* grafo;
     grafo = (GR*)malloc(sizeof(GR));
 
     if(grafo != NULL) {
-        grafo->numVertices = 0;
+        grafo->numVertices = numVertices;
         grafo->inicio = NULL;
     }
 
@@ -346,11 +347,12 @@ GR* LerGrafo(char* nomeFicheiro) {
 
     if(fp == NULL) return NULL;
     
-    //Criar um grafo
-    GR* grafo = CriarGrafo();
-    
+    int numVertices;
 
-    fread(&grafo->numVertices, sizeof(int), 1, fp);
+    fread(&numVertices, sizeof(int), 1, fp);
+
+    //Criar um grafo
+    GR* grafo = CriarGrafo(numVertices);
 
     Vertice* aux;
 
@@ -394,6 +396,14 @@ GR* LerGrafo(char* nomeFicheiro) {
     return grafo;
 }
 
+/**
+ * @brief 
+ * 
+ * @param grafo 
+ * @param id 
+ * @return true 
+ * @return false 
+ */
 bool ProcuraEmProfundidade(GR* grafo, int id) {
 
     if(grafo == NULL) return false;
@@ -405,7 +415,7 @@ bool ProcuraEmProfundidade(GR* grafo, int id) {
     if(visitado == NULL) return false;
 
     //Inicializar todos como false
-    for(int i=1; i <= grafo->numVertices; i=i+1) {
+    for(int i=0; i < grafo->numVertices; i=i+1) {
         visitado[i] = false;
     }
 
@@ -434,10 +444,10 @@ bool ProcuraEmProfundidade(GR* grafo, int id) {
  */
 bool dfs(Vertice* inicio, Vertice* v, bool* visitado) {
    
-    if(v == NULL || visitado[v->id] == true) return false;
+    if(v == NULL || visitado[v->id-1] == true) return false;
     
 
-    visitado[v->id] = true;
+    visitado[v->id-1] = true;
 
     printf("Antena %d, (%d,%d)\n",v->id,v->l,v->c);
 
@@ -450,5 +460,132 @@ bool dfs(Vertice* inicio, Vertice* v, bool* visitado) {
         Adj = Adj->next;
     }
 
+    return true;
+}
+
+/**
+ * @brief 
+ * 
+ * @param grafo 
+ * @param v 
+ * @return true 
+ * @return false 
+ */
+bool ProcuraEmLargura(GR* grafo, Vertice* v) {
+
+    //Verificar se o grafo e vertice são nulos
+    if(grafo == NULL || v == NULL) return false;
+
+    //Serve para marcar os vertices visitados na procura
+    bool* visitado;
+    visitado = (bool*)malloc(grafo->numVertices * sizeof(bool));
+
+    if(visitado == NULL) return false;
+
+    //Inicializar todos como false
+    for(int i=0; i < grafo->numVertices; i=i+1) {
+        visitado[i] = false;
+    }
+
+    Vertice* fila[grafo->numVertices];
+
+    int frente=0, tras=0;
+
+    visitado[v->id-1] = true;
+    fila[tras++] = v;
+    printf("Antenas alcançadas a partir da antena %d: \n", v->id);
+    while(frente < tras) {
+        Vertice* atual = fila[frente++];
+
+        printf("Antena %d, (%d,%d)\n", atual->id, atual->l, atual->c);
+
+        Adjacente* Adj = atual->next;
+        while(Adj!=NULL) {
+
+            //Procurar o vertice correspondente ao ID
+            Vertice* vizinho = grafo->inicio;
+            while(vizinho!=NULL && vizinho->id != Adj->destino) {
+                vizinho=vizinho->proximo;
+            }
+
+            if(vizinho !=NULL && visitado[vizinho->id-1] == false) {
+                visitado[vizinho->id-1] = true;
+                fila[tras++] = vizinho;
+            }
+
+            Adj=Adj->next;
+        }
+    }
+
+    free(visitado);
+    return true;
+}
+
+bool ListarCaminhosRec(GR* grafo, Vertice* atual, Vertice* destino, bool* visitado, Vertice* caminho[], int nivel) {
+
+    if(grafo == NULL || atual == NULL || destino == NULL) return false;
+
+    visitado[atual->id-1] = true;
+    caminho[nivel++] = atual;
+
+    if(atual == destino) 
+    {
+        printf("Caminho:");
+        for(int i=0; i<nivel; i=i+1) {
+            Vertice* v = caminho[i]; 
+            printf("(%d,%d)",v->l, v->c);
+            if(i< nivel-1) printf("->");
+        }
+        printf("\n");
+    }
+    else 
+    {
+        //Percorrer a lista de adjacências
+        Adjacente* a = atual->next;
+        while(a!=NULL) {
+            Vertice* v = ProcurarVertice(grafo->inicio,a->destino);
+            if(v!=NULL && visitado[v->id-1] == false && v->frequencia == atual->frequencia) {
+                ListarCaminhosRec(grafo,v,destino,visitado,caminho,nivel);
+            }
+            if(a->next!=NULL) a=a->next;
+            else break;
+        }
+        /* 
+        for(Adjacente* a = atual->next; a!= NULL; a=a->next) {
+            Vertice* v = ProcurarVertice(grafo->inicio,a->destino);
+            if(v!=NULL && visitado[v->id-1] == false && v->frequencia == atual->frequencia) {
+                ListarCaminhosRec(grafo,v,destino,visitado,caminho,nivel);
+            }
+
+        }*/
+    }
+
+    visitado[atual->id-1] = false;
+    return true;
+
+}
+
+
+bool ListarTodosCaminhos(GR* grafo, Vertice* origem, Vertice* destino) {
+    
+    
+    if(grafo == NULL || origem == NULL || destino == NULL) return false;
+    
+
+    //Serve para marcar os vertices visitados na procura
+    bool* visitado;
+    visitado = (bool*)malloc(grafo->numVertices * sizeof(bool));
+
+    if(visitado == NULL) return false;
+    
+    //Inicializar todos como false
+    for(int i=0; i < grafo->numVertices; i=i+1) {
+        visitado[i] = false;
+    }
+
+    Vertice* caminho[grafo->numVertices];
+    bool ok = ListarCaminhosRec(grafo,origem,destino,visitado,caminho,0);
+
+    free(visitado);
     return true;
 }

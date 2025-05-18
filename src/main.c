@@ -117,7 +117,14 @@ ok = GravarGrafo("grafo.bin", grafo);
 
 GR* grafo = LerGrafo("grafo.bin");
 
-bool ok = ProcuraEmProfundidade(grafo, 2);
+//bool ok = ProcuraEmProfundidade(grafo, 2);
+
+Vertice* a2 = ProcurarVertice(grafo->inicio,2);
+Vertice* a3 = ProcurarVertice(grafo->inicio,3);
+
+bool ok = ListarTodosCaminhos(grafo,a2,a3);
+
+//bool ok = ProcuraEmLargura(grafo,a2);
 
     return 0;
 }

@@ -53,10 +53,16 @@
         Vertice* inicio;
     }GR;
 
-    GR* CriarGrafo();
+    GR* CriarGrafo(int numVertices);
     bool GravarGrafo(char* nomeFicheiro, GR* grafo);
     GR* LerGrafo(char* nomeFicheiro);
 
     bool ProcuraEmProfundidade(GR* grafo, int id);
     bool dfs(Vertice* inicio, Vertice* v, bool* visitado);
+
+    bool ProcuraEmLargura(GR* grafo, Vertice* v);
+
+    bool ListarCaminhosRec(GR* grafo, Vertice* atual, Vertice* destino, bool* visitado, Vertice* caminho[], int nivel);
+    bool ListarTodosCaminhos(GR* grafo, Vertice* origem, Vertice* destino);
+
 #pragma endregion
