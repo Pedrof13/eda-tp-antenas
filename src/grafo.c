@@ -12,108 +12,135 @@
 #include "../include/grafo.h"
 
 /**
- * @brief Função para criar adjacencia
- * 
- * @param destino 
- * @return Adjacente* 
+ * @brief Função para criar uma adjacência
+ *
+ * @param l linha
+ * @param c coluna
+ * @return Adjacente*
  */
-Adjacente* CriarAdjacencia(int destino) {
-    Adjacente* aux;
-    
-    aux = (Adjacente*)malloc(sizeof(Adjacente));
+Adjacente *CriarAdjacencia(int l, int c)
+{
 
-    if(aux!=NULL) {
-        aux->destino = destino;
+    Adjacente *aux;
+    aux = (Adjacente *)malloc(sizeof(Adjacente));
+
+    if (aux != NULL)
+    {
+        aux->l = l;
+        aux->c = c;
         aux->next = NULL;
     }
     return aux;
 }
 
 /**
- * @brief Função para inserir uma adjacencia
- * 
- * @param origem 
- * @param novo 
- * @return true 
- * @return false 
+ * @brief Função para inserir adjacência à lista por ordem das coordenadas
+ *
+ * @param origem vertice origem
+ * @param novo nova adjacência
+ * @return true
+ * @return false
  */
-bool InserirAdjacencia(Vertice* origem, Adjacente* novo) {
+bool InserirAdjacencia(Vertice *origem, Adjacente *novo)
+{
 
-    //Verificar se são nulos ou se o id é igual
-    if(origem == NULL || novo == NULL || origem->id == novo->destino) return false;
-
-    //Verificar se é o primeiro da lista
-    if(origem->next == NULL) {
+    // Verificar se o vertice pretence ao inicio da lista
+    if (origem->next == NULL || novo->l < origem->next->l || (novo->l == origem->next->l && novo->c < origem->next->c))
+    {
         novo->next = origem->next;
         origem->next = novo;
         return true;
     }
 
-    Adjacente* aux = origem->next;
-    while(aux!=NULL) {
-        if(aux->next != NULL) {
-            aux = aux->next;
+    Adjacente *atual = origem->next;
+    Adjacente *anterior = atual;
+
+    // Percorrer a lista até encontrar a posição correspondente
+    while (atual != NULL && (atual->l < novo->l || (atual->l == novo->l && atual->c < novo->c)))
+    {
+        // Verificar se o próximo da lista é nulo
+        if (atual->next != NULL)
+        {
+            anterior = atual;
+            atual = atual->next;
         }
-        else {
-            novo->next = aux->next;
-            aux->next = novo;
-            break;
-        }
-        
+        else
+            break; // Parou o while
     }
 
-    return true; //Sucesso
+    if (atual->next == NULL && (atual->l < novo->l || (atual->l == novo->l && atual->c < novo->c)))
+    {
+        // Insere no fim
+        atual->next = novo;
+    }
+    else
+    {
+        // Insere o novo vertice entre dois vertices da lista
+        anterior->next = novo;
+        novo->next = atual;
+    }
+
+    return true; // Sucesso
 }
 
 /**
  * @brief Função para remover uma adjacência
- * 
- * @param origem 
- * @param adj 
- * @return true 
- * @return false 
+ *
+ * @param origem vertice origem
+ * @param adj adjacencia a ser removida
+ * @return true
+ * @return false
  */
-bool RemoverAdjacencia(Vertice* origem, Adjacente* adj) {
+bool RemoverAdjacencia(Vertice *origem, Adjacente *adj)
+{
 
-    //Verificar se o Vertice origem é nulo ou se a lista de adjacência está vazia
-    if(origem == NULL || origem->next == NULL) return false; //Falhou
+    // Verificar se o Vertice origem é nulo ou se a lista de adjacência está vazia
+    if (origem == NULL || origem->next == NULL)
+        return false; // Falhou
 
-    //Verificar se a adjacência é o primeiro da lista
-    if(origem->next == adj) {
+    // Verificar se a adjacência é o primeiro da lista
+    if (origem->next->l == adj->l || (origem->next->l == adj->l && origem->next->c == adj->c))
+    {
         Adjacente *aux = origem->next;
 
-        //Verificar se adjacência é o único da lista
-        if(origem->next->next == NULL) {
+        // Verificar se adjacência é o único da lista
+        if (origem->next->next == NULL)
+        {
             origem->next = NULL;
         }
-        else {
+        else
+        {
             origem->next = origem->next->next;
         }
         free(aux);
         return true;
     }
 
-    Adjacente* atual = origem->next;
-    Adjacente* anterior = atual;
+    Adjacente *atual = origem->next;
+    Adjacente *anterior = atual;
 
-    //Percorrer a lista de adjacências
-    while(atual->destino != adj->destino) {
+    // Percorrer a lista de adjacências
+    while (atual->l != adj->l || (atual->l == adj->l && atual->c != adj->c))
+    {
 
-        if(atual->next != NULL) {
+        if (atual->next != NULL)
+        {
             anterior = atual;
             atual = atual->next;
         }
-        else break;
+        else
+            break;
     }
 
-    //Verificar se encontrou a adjacência a ser removida
-    if(atual->destino == adj->destino) {
+    // Verificar se encontrou a adjacência a ser removida
+    if (atual->l == adj->l && atual->c == adj->c)
+    {
 
-        if(atual->next != NULL)
+        if (atual->next != NULL)
         {
             anterior->next = atual->next;
         }
-        else 
+        else
         {
             anterior->next = NULL;
         }
@@ -124,27 +151,26 @@ bool RemoverAdjacencia(Vertice* origem, Adjacente* adj) {
     return false;
 }
 
-
 /**
- * @brief Função para criar um vertice
- * 
- * @param id 
- * @param f 
- * @param l 
- * @param c 
- * @return Vertice* 
+ * @brief Função para criar vertice
+ *
+ * @param f frequência
+ * @param l linha
+ * @param c coluna
+ * @return Vertice*
  */
-Vertice* CriarVertice(int id, char f, int l, int c) {
-    Vertice* aux;
-    
-    aux = (Vertice*)malloc(sizeof(Vertice));
-    
+Vertice *CriarVertice(char f, int l, int c)
+{
 
-    if(aux!=NULL) {
-        aux->id = id;
-        aux->frequencia = f;
+    Vertice *aux;
+    aux = (Vertice *)malloc(sizeof(Vertice));
+
+    if (aux != NULL)
+    {
+        aux->f = f;
         aux->l = l;
         aux->c = c;
+        aux->visitado = false;
         aux->next = NULL;
         aux->proximo = NULL;
     }
@@ -152,142 +178,187 @@ Vertice* CriarVertice(int id, char f, int l, int c) {
 }
 
 /**
- * @brief Função para procurar um vertice existente
- * 
- * @param inicio 
- * @param l 
- * @param c 
- * @return Vertice* 
+ * @brief Função para procurar vertice a partir das coordenadas
+ *
+ * @param inicio lista de vertices
+ * @param l linha
+ * @param c coluna
+ * @return Vertice*
  */
-Vertice* ProcurarVertice(Vertice* inicio, int id) {
+Vertice *ProcurarVertice(Vertice *inicio, int l, int c)
+{
 
-    Vertice* aux = inicio;
+    Vertice *aux = inicio;
 
-    //Percorrer a lista
-    while(aux != NULL && aux->id != id)
+    // Percorrer a lista
+    while (aux != NULL &&
+           (aux->l != l || (aux->l == l && aux->c != c)))
     {
-        if(aux->proximo != NULL) aux = aux->proximo;
-        else break;
+        if (aux->proximo != NULL)
+            aux = aux->proximo;
+        else
+            break;
     }
 
-    //Vertice encontrado
-    if(aux != NULL && aux->id == id) return aux;
+    // Vertice encontrado
+    if (aux != NULL && aux->l == l && aux->c == c)
+        return aux;
 
-    //Vertice não encontrado
+    // Vertice não encontrado
     return NULL;
-
 }
 
 /**
  * @brief Função para inserir um vertice na lista
- * 
- * @param novo 
- * @param inicio 
- * @return Vertice* 
+ *
+ * @param novo novo vertice
+ * @param inicio lista de vertices
+ * @return Vertice*
  */
-Vertice* InserirVertice(Vertice* novo, Vertice* inicio) {
+bool InserirVertice(Vertice *novo, Vertice **inicio)
+{
 
-    //Verificar se o vertice pretence ao inicio da lista
-    if(inicio == NULL || novo->l < inicio->l || (novo->l == inicio->l && novo->c < inicio->c))
-    {
-        novo->proximo = inicio;
-        inicio = novo;
-        return inicio;
-    }
-
-    //Verificar se já existe um Vertice com as mesmas coordenadas
-    if(ProcurarVertice(inicio,novo->id) != NULL) 
+    // Verificar se já existe um Vertice com as mesmas coordenadas
+    if (ProcurarVertice(*inicio, novo->l, novo->c) != NULL)
     {
         free(novo);
-        return inicio;
+        return false;
     }
 
-    Vertice* atual = inicio;
-    Vertice* anterior = atual;
-
-    //Percorrer a lista até encontrar a posição correspondente
-    while(atual != NULL && (atual->l < novo->l || (atual->l == novo->l && atual->c < novo->c))) 
+    // Verificar se o vertice pretence ao inicio da lista
+    if (*inicio == NULL || novo->l < (*inicio)->l || (novo->l == (*inicio)->l && novo->c < (*inicio)->c))
     {
-        //Verificar se o próximo da lista é nulo
-        if(atual->proximo != NULL) 
+        novo->proximo = *inicio;
+        *inicio = novo;
+        return true;
+    }
+
+    Vertice *atual = (*inicio);
+    Vertice *anterior = atual;
+
+    // Percorrer a lista até encontrar a posição correspondente
+    while (atual != NULL && (atual->l < novo->l || (atual->l == novo->l && atual->c < novo->c)))
+    {
+        // Verificar se o próximo da lista é nulo
+        if (atual->proximo != NULL)
         {
             anterior = atual;
             atual = atual->proximo;
         }
-        else break;//Parou o while
-        
+        else
+            break; // Parou o while
     }
 
-    
-    if(atual->proximo == NULL && (atual->l < novo->l || (atual->l == novo->l && atual->c < novo->c)))
+    if (atual->proximo == NULL && (atual->l < novo->l || (atual->l == novo->l && atual->c < novo->c)))
     {
-        //Insere no fim
+        // Insere no fim
         atual->proximo = novo;
     }
     else
     {
-        //Insere o novo vertice entre dois vertices da lista
+        // Insere o novo vertice entre dois vertices da lista
         anterior->proximo = novo;
         novo->proximo = atual;
     }
 
-
-    return inicio;
+    return true;
 }
 
 /**
  * @brief Função para remover o vertice da lista
- * 
- * @param v 
- * @param inicio 
- * @return Vertice* 
+ *
+ * @param v vertice a ser removido
+ * @param inicio lista de vertices
+ * @return Vertice*
  */
-Vertice* RemoverVertice(Vertice* v, Vertice* inicio) {
-    
-    //Verificar se a lista está vaiza ou se o vertice a ser removido não existe na lista
-    if(inicio == NULL || ProcurarVertice(inicio,v->id) == NULL) return inicio;
+bool RemoverVertice(Vertice *v, Vertice **inicio)
+{
 
+    // Verificar se a lista está vaiza ou se o vertice a ser removido não existe na lista
+    if (*inicio == NULL || ProcurarVertice(*inicio, v->l, v->c) == NULL)
+        return false;
 
-    //Verificar se o vértice a ser removido é o primeiro da lista
-    if(v->l == inicio->l && v->c == inicio->c) 
+    // Verificar se o vértice a ser removido é o primeiro da lista
+    if (v->l == (*inicio)->l && v->c == (*inicio)->c)
     {
-        Vertice* aux = inicio;
-        inicio = inicio->proximo;
+        Vertice *aux = *inicio;
+        Adjacente *auxAdj = aux->next;
+        Adjacente *Remover = CriarAdjacencia(v->l, v->c);
+
+        // Procurar outros vertices para remover adjacência do vertice a ser removido
+        while (auxAdj != NULL)
+        {
+
+            if (ProcurarVertice(*inicio, auxAdj->l, auxAdj->c) != NULL)
+            {
+                Vertice *VerticeAdjacente = ProcurarVertice(*inicio, auxAdj->l, auxAdj->c);
+                bool ok = RemoverAdjacencia(VerticeAdjacente, Remover);
+            }
+
+            if (auxAdj->next != NULL)
+                auxAdj = auxAdj->next;
+            else
+                break;
+        }
+
+        *inicio = (*inicio)->proximo;
         free(aux);
-        return inicio;
+        return true;
     }
     else
     {
-        Vertice* atual = inicio;
-        Vertice* anterior = atual;
+        Vertice *atual = *inicio;
+        Vertice *anterior = atual;
 
-        //Procurar até encontrar
-        while(atual != NULL && (atual->l != v->l || (atual->l == v->l && atual->c != v->c)))
+        // Procurar até encontrar
+        while (atual != NULL && (atual->l != v->l || (atual->l == v->l && atual->c != v->c)))
         {
             anterior = atual;
             atual = atual->proximo;
         }
 
-        if(atual != NULL) {
+        if (atual != NULL)
+        {
+
+            Adjacente *auxAdj = atual->next;
+            Adjacente *Remover = CriarAdjacencia(v->l, v->c);
+
+            // Procurar outros vertices para remover adjacência do vertice a ser removido
+            while (auxAdj != NULL)
+            {
+                if (ProcurarVertice(*inicio, auxAdj->l, auxAdj->c) != NULL)
+                {
+                    Vertice *VerticeAdjacente = ProcurarVertice(*inicio, auxAdj->l, auxAdj->c);
+                    bool ok = RemoverAdjacencia(VerticeAdjacente, Remover);
+                }
+
+                if (auxAdj->next != NULL)
+                    auxAdj = auxAdj->next;
+                else
+                    break;
+            }
+
             anterior->proximo = atual->proximo;
             free(atual);
         }
-        return inicio;
+        return true;
     }
-    
 }
 
 /**
  * @brief Função para criar um grafo
- * 
- * @return GR* 
+ *
+ * @param numVertices
+ * @return GR*
  */
-GR* CriarGrafo(int numVertices) {
-    
-    GR* grafo;
-    grafo = (GR*)malloc(sizeof(GR));
+GR *CriarGrafo(int numVertices)
+{
 
-    if(grafo != NULL) {
+    GR *grafo;
+    grafo = (GR *)malloc(sizeof(GR));
+
+    if (grafo != NULL)
+    {
         grafo->numVertices = numVertices;
         grafo->inicio = NULL;
     }
@@ -297,58 +368,62 @@ GR* CriarGrafo(int numVertices) {
 
 /**
  * @brief Função para gravar um grafo em fichiero binário
- * 
- * @param nomeFicheiro 
- * @param grafo 
- * @return true 
- * @return false 
+ *
+ * @param nomeFicheiro
+ * @param grafo
+ * @return true
+ * @return false
  */
-bool GravarGrafo(char* nomeFicheiro, GR* grafo) {
+bool GravarGrafo(char *nomeFicheiro, GR *grafo)
+{
 
-    FILE* fp = fopen(nomeFicheiro, "wb");
+    FILE *fp = fopen(nomeFicheiro, "wb");
 
-    //Verificar se há erro ao abrir o ficheiro ou a lista está vazia
-    if(fp == NULL || grafo->inicio == NULL) return false;
+    // Verificar se há erro ao abrir o ficheiro ou a lista está vazia
+    if (fp == NULL || grafo->inicio == NULL)
+        return false;
 
-    //gravar o número de vertices
+    // gravar o número de vertices
     fwrite(&grafo->numVertices, sizeof(int), 1, fp);
 
-    //Gravar Vértices e adjacências
-    Vertice* aux = grafo->inicio;
+    // Gravar Vértices e adjacências
+    Vertice *aux = grafo->inicio;
 
-    Adjacente* Adj = NULL;
+    Adjacente *Adj = NULL;
     int numAdj = 0;
 
     while (aux != NULL)
-    {   
-        fwrite(&aux->id, sizeof(int), 1, fp);
-        fwrite(&aux->frequencia, sizeof(char), 1, fp);
+    {
+        fwrite(&aux->f, sizeof(char), 1, fp);
         fwrite(&aux->l, sizeof(int), 1, fp);
         fwrite(&aux->c, sizeof(int), 1, fp);
-        
-        //gravar id do vertice destino
+
+        // gravar id do vertice destino
         Adj = aux->next;
-        
-        //número de adjacências
+
+        // número de adjacências
         numAdj = 0;
 
-        while(Adj != NULL) {
+        while (Adj != NULL)
+        {
             numAdj = numAdj + 1;
             Adj = Adj->next;
         }
         fwrite(&numAdj, sizeof(int), 1, fp);
         Adj = aux->next;
 
-        while(Adj != NULL) {
-            fwrite(&Adj->destino, sizeof(int), 1, fp);
-            
-            if(Adj->next != NULL) Adj = Adj->next;
-            else break;
-            
+        while (Adj != NULL)
+        {
+            fwrite(&Adj->l, sizeof(int), 1, fp);
+            fwrite(&Adj->c, sizeof(int), 1, fp);
+
+            if (Adj->next != NULL)
+                Adj = Adj->next;
+            else
+                break;
         }
 
         aux = aux->proximo;
-        
     }
 
     fclose(fp);
@@ -357,241 +432,289 @@ bool GravarGrafo(char* nomeFicheiro, GR* grafo) {
 
 /**
  * @brief Função para ler um grafo em ficheiro binário
- * 
- * @param nomeFicheiro 
- * @return GR* 
+ *
+ * @param nomeFicheiro
+ * @return GR*
  */
-GR* LerGrafo(char* nomeFicheiro) {
-    FILE* fp = fopen(nomeFicheiro, "rb");
+GR *LerGrafo(char *nomeFicheiro)
+{
+    FILE *fp = fopen(nomeFicheiro, "rb");
 
-    if(fp == NULL) return NULL;
-    
+    if (fp == NULL)
+        return NULL;
+
     int numVertices;
 
     fread(&numVertices, sizeof(int), 1, fp);
 
-    //Criar um grafo
-    GR* grafo = CriarGrafo(numVertices);
+    // Criar um grafo
+    GR *grafo = CriarGrafo(numVertices);
 
-    Vertice* aux;
+    Vertice *aux;
+    Adjacente *Adj = NULL;
+    int numAdj = 0;
+    bool ok = false;
+    // Percorrer os vertices
+    for (int i = 0; i < grafo->numVertices; i = i + 1)
+    {
 
-    Adjacente* Adj = NULL;
-    int numAdj = 0; 
-    //Percorrer os vertices
-    for(int i=0; i < grafo->numVertices; i=i+1) {
-        
-        int id, l, c;
+        int l, c;
         char f;
 
-        //Ler Vertice
-        fread(&id, sizeof(int), 1, fp);
+        // Ler Vertice
         fread(&f, sizeof(char), 1, fp);
         fread(&l, sizeof(int), 1, fp);
         fread(&c, sizeof(int), 1, fp);
 
-        //Criar Vertice
-        aux = CriarVertice(id,f,l,c);
-        
-        //Inserir Vertice na lista
-        grafo->inicio = InserirVertice(aux,grafo->inicio);
+        // Criar Vertice
+        aux = CriarVertice(f, l, c);
 
-        //número de adjacências
+        // Inserir Vertice na lista
+        ok = InserirVertice(aux, &grafo->inicio);
+
+        // número de adjacências
         int numAdj = 0;
         Adj = aux->next;
         bool feedback = false;
 
         fread(&numAdj, sizeof(int), 1, fp);
 
-        for(int j=0; j < numAdj; j=j+1) {
-            int destino;
-            fread(&destino, sizeof(int), 1, fp);
-            Adj = CriarAdjacencia(destino);
+        for (int j = 0; j < numAdj; j = j + 1)
+        {
+            int linha, coluna;
+            fread(&linha, sizeof(int), 1, fp);
+            fread(&coluna, sizeof(int), 1, fp);
+            Adj = CriarAdjacencia(linha, coluna);
             feedback = InserirAdjacencia(aux, Adj);
         }
-        
     }
 
     fclose(fp);
     return grafo;
 }
 
+bool InserirCaminho(Adjacente **lista, int l, int c)
+{
+
+    Adjacente *novo = CriarAdjacencia(l, c);
+
+    // Insere no inicio da lista
+    if (*lista == NULL)
+    {
+        *lista = novo;
+    }
+
+    // Inserir no fim da lista
+    else
+    {
+        Adjacente *aux = *lista;
+        while (aux->next != NULL)
+        {
+            aux = aux->next;
+        }
+        aux->next = novo;
+    }
+
+    return true;
+}
 /**
- * @brief 
- * 
- * @param grafo 
- * @param id 
- * @return true 
- * @return false 
+ * @brief Função que procura em profundidade a partir de uma determinada antena
+ *
+ * @param grafo
+ * @param origem vertice origem
+ * @return true
+ * @return false
  */
-bool ProcuraEmProfundidade(GR* grafo, int id) {
+Adjacente *ProcuraEmProfundidade(GR *grafo, Vertice *origem)
+{
 
-    if(grafo == NULL) return false;
+    if (grafo == NULL || origem == NULL)
+        return NULL;
 
-    //Serve para marcar os vertices visitados na procura
-    bool visitado[grafo->numVertices];
+    // Inicializar todos como false
+    Vertice *aux = origem->proximo;
 
-    //Inicializar todos como false
-    for(int i=0; i < grafo->numVertices; i=i+1) {
-        visitado[i] = false;
+    while (aux->proximo != NULL)
+    {
+        aux->visitado = false;
+        aux = aux->proximo;
     }
 
-    Vertice* origem = ProcurarVertice(grafo->inicio, id);
-    if(origem != NULL) {
-        printf("Antenas alcançadas a partir da antena %d: \n", id);
-        bool ok = dfs(grafo->inicio,origem,visitado);
-        return true;
-    }
-    
-    return false;
-    
+    Adjacente *lista = NULL;
+    dfs(grafo->inicio, origem, &lista);
+    return lista;
 }
 
 /**
- * @brief 
- * 
- * @param inicio 
- * @param v 
- * @param visitado 
- * @return true 
- * @return false 
+ * @brief Função recursiva que faz a procura em profundidade (DFS)
+ *
+ * @param inicio lista de vertices
+ * @param origem vertice de origem
+ * @return true
+ * @return false
  */
-bool dfs(Vertice* inicio, Vertice* v, bool visitado[]) {
-   
-    if(v == NULL || visitado[v->id-1] == true) return false;
-    
-    visitado[v->id-1] = true;
+bool dfs(Vertice *inicio, Vertice *origem, Adjacente **lista)
+{
 
-    printf("Antena %d, (%d,%d)\n",v->id,v->l,v->c);
+    if (origem == NULL || origem->visitado == true)
+        return false;
 
-    Adjacente* Adj = v->next;
-    while (Adj != NULL) {
-        Vertice* proximo = ProcurarVertice(inicio, Adj->destino);
-        dfs(inicio,proximo,visitado);
-        Adj = Adj->next;
+    origem->visitado = true;
+
+    bool ok = InserirCaminho(lista, origem->l, origem->c);
+
+    Adjacente *adj = origem->next;
+    while (adj != NULL)
+    {
+        Vertice *proximo = ProcurarVertice(inicio, adj->l, adj->c);
+        dfs(inicio, proximo, lista);
+        adj = adj->next;
     }
 
     return true;
 }
 
 /**
- * @brief 
- * 
- * @param grafo 
- * @param v 
- * @return true 
- * @return false 
+ * @brief Procura em largura a partir de uma determinada antena (BFS)
+ *
+ * @param grafo
+ * @param origem vertice de origem
+ * @return true
+ * @return false
  */
-bool ProcuraEmLargura(GR* grafo, Vertice* v) {
+Adjacente *ProcuraEmLargura(GR *grafo, Vertice *origem)
+{
 
-    //Verificar se o grafo e vertice são nulos
-    if(grafo == NULL || v == NULL) return false;
+    // Verificar se o grafo e vertice são nulos
+    if (grafo == NULL || origem == NULL)
+        return NULL;
 
-    //Serve para marcar os vertices visitados na procura
-    bool visitado[grafo->numVertices];
+    // Inicializar todos como false
+    Vertice *aux = origem->proximo;
 
-    //Inicializar todos como false
-    for(int i=0; i < grafo->numVertices; i=i+1) {
-        visitado[i] = false;
+    while (aux->proximo != NULL)
+    {
+        aux->visitado = false;
+        aux = aux->proximo;
     }
+    Adjacente *lista = NULL;
 
-    Vertice* fila[grafo->numVertices];
+    Vertice *fila[grafo->numVertices];
+    int frente = 0, tras = 0;
 
-    int frente=0, tras=0;
+    origem->visitado = true;
+    fila[tras++] = origem;
+    // printf("Antenas alcançadas a partir da antena %c (%d,%d): \n", origem->f, origem->l, origem->c);
+    while (frente < tras)
+    {
+        Vertice *atual = fila[frente++];
+        InserirCaminho(&lista, atual->l, atual->c);
 
-    visitado[v->id-1] = true;
-    fila[tras++] = v;
-    printf("Antenas alcançadas a partir da antena %d: \n", v->id);
-    while(frente < tras) {
-        Vertice* atual = fila[frente++];
+        // printf("Antena %c (%d,%d)\n", atual->f, atual->l, atual->c);
 
-        printf("Antena %d, (%d,%d)\n", atual->id, atual->l, atual->c);
+        Adjacente *adj = atual->next;
+        while (adj != NULL)
+        {
 
-        Adjacente* Adj = atual->next;
-        while(Adj!=NULL) {
-
-            //Procurar o vertice correspondente ao ID
-            Vertice* vizinho = grafo->inicio;
-            while(vizinho!=NULL && vizinho->id != Adj->destino) {
-                vizinho=vizinho->proximo;
+            // Procurar o vertice correspondente ao ID
+            Vertice *vizinho = grafo->inicio;
+            while (vizinho != NULL && (vizinho->l != adj->l || (vizinho->l == adj->l && vizinho->c != adj->c)))
+            {
+                vizinho = vizinho->proximo;
             }
 
-            if(vizinho !=NULL && visitado[vizinho->id-1] == false) {
-                visitado[vizinho->id-1] = true;
+            if (vizinho != NULL && vizinho->visitado == false)
+            {
+                vizinho->visitado = true;
                 fila[tras++] = vizinho;
             }
 
-            Adj=Adj->next;
+            adj = adj->next;
         }
     }
 
-    return true;
+    return lista;
 }
 
-bool ListarCaminhosRec(GR* grafo, Vertice* atual, Vertice* destino, bool* visitado, Vertice* caminho[], int nivel) {
+/**
+ * @brief Função auxiliar para listar todos os caminhos possíveis entre duas antenas (Recursiva)
+ *
+ * @param grafo
+ * @param atual
+ * @param destino
+ * @param caminho
+ * @param nivel
+ * @return true
+ * @return false
+ */
+bool ListarCaminhosRec(GR *grafo, Vertice *atual, Vertice *destino, Vertice *caminho[], int nivel)
+{
 
-    if(grafo == NULL || atual == NULL || destino == NULL) return false;
+    if (grafo == NULL || atual == NULL || destino == NULL)
+        return false;
 
-    visitado[atual->id-1] = true;
+    atual->visitado = true;
     caminho[nivel++] = atual;
 
-    if(atual == destino) 
+    if (atual == destino)
     {
         printf("Caminho:");
-        for(int i=0; i<nivel; i=i+1) {
-            Vertice* v = caminho[i]; 
-            printf("(%d,%d)",v->l, v->c);
-            if(i< nivel-1) printf("->");
+        for (int i = 0; i < nivel; i = i + 1)
+        {
+            Vertice *v = caminho[i];
+            printf("(%d,%d)", v->l, v->c);
+            if (i < nivel - 1)
+                printf("->");
         }
         printf("\n");
     }
-    else 
+    else
     {
-        //Percorrer a lista de adjacências
-        Adjacente* a = atual->next;
-        while(a!=NULL) {
-            Vertice* v = ProcurarVertice(grafo->inicio,a->destino);
-            if(v!=NULL && visitado[v->id-1] == false && v->frequencia == atual->frequencia) {
-                ListarCaminhosRec(grafo,v,destino,visitado,caminho,nivel);
+        // Percorrer a lista de adjacências
+        Adjacente *a = atual->next;
+        while (a != NULL)
+        {
+            Vertice *v = ProcurarVertice(grafo->inicio, a->l, a->c);
+            if (v != NULL && v->visitado == false && v->f == atual->f)
+            {
+                ListarCaminhosRec(grafo, v, destino, caminho, nivel);
             }
-            if(a->next!=NULL) a=a->next;
-            else break;
+            if (a->next != NULL)
+                a = a->next;
+            else
+                break;
         }
-        /* 
-        for(Adjacente* a = atual->next; a!= NULL; a=a->next) {
-            Vertice* v = ProcurarVertice(grafo->inicio,a->destino);
-            if(v!=NULL && visitado[v->id-1] == false && v->frequencia == atual->frequencia) {
-                ListarCaminhosRec(grafo,v,destino,visitado,caminho,nivel);
-            }
-
-        }*/
     }
 
-    visitado[atual->id-1] = false;
+    atual->visitado = false;
     return true;
-
 }
 
+/**
+ * @brief Função para listar todos os caminhos possíveis entre duas antenas
+ *
+ * @param grafo
+ * @param origem
+ * @param destino
+ * @return true
+ * @return false
+ */
+bool ListarTodosCaminhos(GR *grafo, Vertice *origem, Vertice *destino)
+{
 
-bool ListarTodosCaminhos(GR* grafo, Vertice* origem, Vertice* destino) {
-    
-    
-    if(grafo == NULL || origem == NULL || destino == NULL) return false;
-    
+    if (grafo == NULL || origem == NULL || destino == NULL)
+        return false;
 
-    //Serve para marcar os vertices visitados na procura
-    bool* visitado;
-    visitado = (bool*)malloc(grafo->numVertices * sizeof(bool));
-
-    if(visitado == NULL) return false;
-    
-    //Inicializar todos como false
-    for(int i=0; i < grafo->numVertices; i=i+1) {
-        visitado[i] = false;
+    // Inicializar todos como false
+    Vertice *aux = origem->proximo;
+    while (aux->proximo != NULL)
+    {
+        aux->visitado = false;
+        aux = aux->proximo;
     }
 
-    Vertice* caminho[grafo->numVertices];
-    bool ok = ListarCaminhosRec(grafo,origem,destino,visitado,caminho,0);
+    Vertice *caminho[grafo->numVertices];
+    bool ok = ListarCaminhosRec(grafo, origem, destino, caminho, 0);
 
-    free(visitado);
     return true;
 }

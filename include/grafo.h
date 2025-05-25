@@ -17,11 +17,11 @@
 #pragma region ADJACENCIAS
     
     typedef struct Adjacente {
-        int destino;
+        int l,c;//coordenadas
         struct Adjacente* next;
     }Adjacente;
 
-    Adjacente* CriarAdjacencia(int destino);
+    Adjacente* CriarAdjacencia(int l, int c);
 
 #pragma endregion
 
@@ -29,17 +29,17 @@
 #pragma region VERTICES
     
     typedef struct Vertice {
-        int id;
-        char frequencia;
-        int l,c;
-        struct Vertice* proximo;
-        struct Adjacente* next;
+        char f;//frequencia
+        int l,c;//Coordenadas
+        bool visitado;//marcador
+        struct Vertice* proximo;//Apontador para o próximo vertice
+        struct Adjacente* next;//Apontador para a próxima adjacência
     }Vertice;
 
-    Vertice* CriarVertice(int id, char f, int l, int c);
-    Vertice* ProcurarVertice(Vertice* inicio, int id);
-    Vertice* InserirVertice(Vertice* novo, Vertice* inicio);
-    Vertice* RemoverVertice(Vertice* v, Vertice* inicio);
+    Vertice* CriarVertice(char f, int l, int c);
+    Vertice* ProcurarVertice(Vertice* inicio, int l, int c);
+    bool InserirVertice(Vertice* novo, Vertice** inicio);
+    bool RemoverVertice(Vertice* v, Vertice** inicio);
 
     bool InserirAdjacencia(Vertice* origem, Adjacente* novo);
     bool RemoverAdjacencia(Vertice* origem, Adjacente* adj);
@@ -49,20 +49,21 @@
 #pragma region GRAFO
     
     typedef struct GR {
-        int numVertices;
-        Vertice* inicio;
+        int numVertices;//Número total de vertices
+        Vertice* inicio;//Lista de vertices
     }GR;
 
     GR* CriarGrafo(int numVertices);
     bool GravarGrafo(char* nomeFicheiro, GR* grafo);
     GR* LerGrafo(char* nomeFicheiro);
 
-    bool ProcuraEmProfundidade(GR* grafo, int id);
-    bool dfs(Vertice* inicio, Vertice* v, bool visitado[]);
+    bool InserirCaminho(Adjacente** lista, int l, int c);
+    Adjacente* ProcuraEmProfundidade(GR* grafo, Vertice* origem);
+    bool dfs(Vertice* inicio, Vertice* origem, Adjacente** lista);
 
-    bool ProcuraEmLargura(GR* grafo, Vertice* v);
+    Adjacente* ProcuraEmLargura(GR* grafo, Vertice* origem);
 
-    bool ListarCaminhosRec(GR* grafo, Vertice* atual, Vertice* destino, bool* visitado, Vertice* caminho[], int nivel);
+    bool ListarCaminhosRec(GR* grafo, Vertice* atual, Vertice* destino, Vertice* caminho[], int nivel);
     bool ListarTodosCaminhos(GR* grafo, Vertice* origem, Vertice* destino);
 
 #pragma endregion
