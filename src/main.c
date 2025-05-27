@@ -143,20 +143,30 @@ int main()
 
     */
 
-    // Ler um grafo a partir de um ficheiro binário
-    GR *grafo = LerGrafo("grafo.bin");
+    /*
+    //Ler um grafo a partir de um ficheiro binário
+    GR* grafo = LerGrafo("grafo.bin");
 
-    Vertice *a2 = ProcurarVertice(grafo->inicio, 1, 1);
-    Vertice *a4 = ProcurarVertice(grafo->inicio, 2, 1);
+    Vertice* a2 = ProcurarVertice(grafo->inicio,1,1);
+    Vertice* a4 = ProcurarVertice(grafo->inicio,2,1);
 
-    // bool ok = RemoverVertice(a4,&grafo->inicio);
+    //bool ok = RemoverVertice(a4,&grafo->inicio);
 
-    // Adjacente* adj = CriarAdjacencia(0,1);
-    // bool ok = RemoverAdjacencia(a2,adj);
+    //Adjacente* adj = CriarAdjacencia(0,1);
+    //bool ok = RemoverAdjacencia(a2,adj);
+    //Adjacente* lista = ProcuraEmProfundidade(grafo, a2);
+    //Adjacente* lista = ProcuraEmLargura(grafo,a2);
+    //ListarTodosCaminhos(grafo,a2,a4);
+    //MostrarLista(lista);
 
-    // Adjacente* lista = ProcuraEmProfundidade(grafo, a2);
-    // Adjacente* lista = ProcuraEmProfundidade(grafo,a2);
-    ListarTodosCaminhos(grafo, a2, a4);
-
+    Caminho* lista = NULL;
+    bool ok = ProcurarTodosCaminhos(grafo,a2,a4,NULL,&lista);
+    */
+    Tamanho *matriz;
+    matriz->nLinhas = 0;
+    matriz->nColunas = 0;
+    GR *grafo = LerGrafosFileTexto("grafo.txt", matriz);
+    // GravarGrafoFileTexto("grafo.txt",grafo,matriz);
+    // Caminho* lista = Procurar(grafo,a2,a4,lista);
     return 0;
 }

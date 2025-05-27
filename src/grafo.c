@@ -493,6 +493,182 @@ GR *LerGrafo(char *nomeFicheiro)
     return grafo;
 }
 
+bool GravarGrafoFileTexto(char *nomeFicheiro, GR *grafo, Tamanho *matriz)
+{
+
+    FILE *fp; // file point
+
+    // Verificar se a lista está vazia
+    if (grafo->inicio == NULL)
+        return false;
+
+    fp = fopen(nomeFicheiro, "wt");
+
+    if (fp != NULL)
+    {
+        Vertice *aux = grafo->inicio;
+
+        for (int l = 0; l < matriz->nLinhas; l = l + 1)
+        {
+
+            for (int c = 0; c < matriz->nColunas; c = c + 1)
+            {
+                if (aux->l == l && aux->c == c)
+                {
+                    fprintf(fp, "%c", aux->f);
+
+                    // Passa para o próximo elemento
+                    if (aux->proximo != NULL)
+                        aux = aux->proximo;
+                }
+                else
+                    fprintf(fp, ".");
+            }
+
+            fprintf(fp, "\n");
+        }
+
+        fclose(fp);
+        return true;
+    }
+
+    else
+        return false;
+}
+
+GR *LerGrafosFileTexto(char *nomeFicheiro, Tamanho *matriz)
+{
+    FILE *fp; // file point
+
+    fp = fopen(nomeFicheiro, "rt");
+
+    int nVertice = 0;
+
+    if (fp != NULL)
+    {
+        Vertice *inicio = NULL;
+        Vertice *aux;
+
+        char c;
+        bool PararContarColuna = false;
+
+        int auxColunas = 0; // indica a coluna da matriz que está atualmente
+
+        // equanto não chegar ao final do ficheiro
+        while (!feof(fp))
+        {
+
+            c = fgetc(fp);
+            if (c != '.' && c != '\n')
+            {
+                aux = CriarVertice(c, matriz->nLinhas, auxColunas);
+                InserirVertice(aux, &inicio);
+                nVertice++;
+            }
+            if (c == '\n')
+            {
+                matriz->nLinhas++;
+                auxColunas = -1;
+                if (PararContarColuna == false)
+                    PararContarColuna = true;
+            }
+
+            if (PararContarColuna == false)
+                matriz->nColunas++;
+            auxColunas++;
+        }
+
+        nVertice--;
+        GR *grafo = CriarGrafo(nVertice);
+        grafo->inicio = inicio;
+
+        // Inserir as adjacencias de cada vertice
+
+        inicio = grafo->inicio;
+        aux = grafo->inicio;
+
+        while (inicio != NULL)
+        {
+            Vertice *v = inicio;
+            while (aux != NULL)
+            {
+
+                if (v->f == aux->f && (v->l != aux->l || (v->l == aux->l && v->c != aux->c)))
+                {
+                    Adjacente *novo = CriarAdjacencia(aux->l, aux->c);
+                    InserirAdjacencia(v, novo);
+                }
+
+                aux = aux->proximo;
+            }
+
+            inicio = inicio->proximo;
+            aux = grafo->inicio;
+        }
+
+        fclose(fp);
+        return grafo;
+    }
+    else
+        return NULL;
+}
+
+/**
+ * @brief
+ *
+ * @param lista
+ * @return true
+ * @return false
+ */
+bool MostrarLista(Adjacente *lista)
+{
+
+    if (lista == NULL)
+        return false;
+
+    Adjacente *aux = lista;
+
+    while (aux != NULL)
+    {
+        printf("(%d,%d)\n", aux->l, aux->c);
+        aux = aux->next;
+    }
+    return true;
+}
+
+/**
+ * @brief Função para inicializar o campo visitado como false dos vertices
+ *
+ * @param grafo
+ * @return true
+ * @return false
+ */
+bool InicializarVisitados(GR **grafo)
+{
+
+    if (*grafo == NULL || (*grafo)->inicio == NULL)
+        return false;
+
+    // Inicializar os visitados
+    Vertice *aux = (*grafo)->inicio;
+    while (aux != NULL)
+    {
+        aux->visitado = false;
+        aux = aux->proximo;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Função para inserir o caminho em uma lista
+ *
+ * @param lista
+ * @param l linha
+ * @param c coluna
+ * @return true
+ * @return false
+ */
 bool InserirCaminho(Adjacente **lista, int l, int c)
 {
 
@@ -517,13 +693,13 @@ bool InserirCaminho(Adjacente **lista, int l, int c)
 
     return true;
 }
+
 /**
  * @brief Função que procura em profundidade a partir de uma determinada antena
  *
  * @param grafo
- * @param origem vertice origem
- * @return true
- * @return false
+ * @param origem vertice de origem
+ * @return Adjacente*
  */
 Adjacente *ProcuraEmProfundidade(GR *grafo, Vertice *origem)
 {
@@ -532,13 +708,7 @@ Adjacente *ProcuraEmProfundidade(GR *grafo, Vertice *origem)
         return NULL;
 
     // Inicializar todos como false
-    Vertice *aux = origem->proximo;
-
-    while (aux->proximo != NULL)
-    {
-        aux->visitado = false;
-        aux = aux->proximo;
-    }
+    InicializarVisitados(&grafo);
 
     Adjacente *lista = NULL;
     dfs(grafo->inicio, origem, &lista);
@@ -579,8 +749,7 @@ bool dfs(Vertice *inicio, Vertice *origem, Adjacente **lista)
  *
  * @param grafo
  * @param origem vertice de origem
- * @return true
- * @return false
+ * @return Adjacente*
  */
 Adjacente *ProcuraEmLargura(GR *grafo, Vertice *origem)
 {
@@ -590,39 +759,33 @@ Adjacente *ProcuraEmLargura(GR *grafo, Vertice *origem)
         return NULL;
 
     // Inicializar todos como false
-    Vertice *aux = origem->proximo;
+    InicializarVisitados(&grafo);
 
-    while (aux->proximo != NULL)
-    {
-        aux->visitado = false;
-        aux = aux->proximo;
-    }
+    // lista para guardar as coordenadas dos caminhos percorridos
     Adjacente *lista = NULL;
 
     Vertice *fila[grafo->numVertices];
     int frente = 0, tras = 0;
 
+    // Marcar como visitado e inserir na fila
     origem->visitado = true;
     fila[tras++] = origem;
-    // printf("Antenas alcançadas a partir da antena %c (%d,%d): \n", origem->f, origem->l, origem->c);
+
+    // Enquanto houver elementos na fila
     while (frente < tras)
     {
+        // Retirar o próximo vértice da fila
         Vertice *atual = fila[frente++];
+
+        // Inserir um caminho para a lista
         InserirCaminho(&lista, atual->l, atual->c);
 
-        // printf("Antena %c (%d,%d)\n", atual->f, atual->l, atual->c);
-
+        // Percorrer todos os visinhos do vértice atual
         Adjacente *adj = atual->next;
         while (adj != NULL)
         {
-
-            // Procurar o vertice correspondente ao ID
-            Vertice *vizinho = grafo->inicio;
-            while (vizinho != NULL && (vizinho->l != adj->l || (vizinho->l == adj->l && vizinho->c != adj->c)))
-            {
-                vizinho = vizinho->proximo;
-            }
-
+            // Procurar o vertice correspondente às coordenadas
+            Vertice *vizinho = ProcurarVertice(grafo->inicio, adj->l, adj->c);
             if (vizinho != NULL && vizinho->visitado == false)
             {
                 vizinho->visitado = true;
@@ -637,52 +800,71 @@ Adjacente *ProcuraEmLargura(GR *grafo, Vertice *origem)
 }
 
 /**
- * @brief Função auxiliar para listar todos os caminhos possíveis entre duas antenas (Recursiva)
+ * @brief Função para procurar todos os caminhos possíveis
  *
  * @param grafo
- * @param atual
- * @param destino
- * @param caminho
- * @param nivel
+ * @param atual vertice atual
+ * @param destino vertice destino
+ * @param caminhoAtual
+ * @param listaCaminhos Lista de caminhos possíveis
  * @return true
  * @return false
  */
-bool ListarCaminhosRec(GR *grafo, Vertice *atual, Vertice *destino, Vertice *caminho[], int nivel)
+bool ProcurarTodosCaminhos(GR *grafo, Vertice *atual, Vertice *destino, Adjacente *caminhoAtual, Caminho **listaCaminhos)
 {
 
     if (grafo == NULL || atual == NULL || destino == NULL)
         return false;
 
     atual->visitado = true;
-    caminho[nivel++] = atual;
+
+    // Criar novo nó com a posição atual
+    Adjacente *novoNo = CriarAdjacencia(atual->l, atual->c);
+    novoNo->next = caminhoAtual;
+    caminhoAtual = novoNo;
 
     if (atual == destino)
     {
-        printf("Caminho:");
-        for (int i = 0; i < nivel; i = i + 1)
+        // Copiar o caminho atual
+        Adjacente *copia = NULL;
+        Adjacente *aux = caminhoAtual;
+
+        // Copiar em ordem inversa (porque estamos a inserir no início)
+        while (aux != NULL)
         {
-            Vertice *v = caminho[i];
-            printf("(%d,%d)", v->l, v->c);
-            if (i < nivel - 1)
-                printf("->");
+            Adjacente *novo = CriarAdjacencia(aux->l, aux->c);
+            if (copia == NULL)
+                copia = novo;
+            else
+            {
+                novo->next = copia;
+                copia = novo;
+            }
+            aux = aux->next;
         }
-        printf("\n");
+
+        // Adicionar à lista de caminhos
+        Caminho *novoCaminho = (Caminho *)malloc(sizeof(Caminho));
+
+        // Guarda na lista de adjacencias
+        novoCaminho->inicio = copia;
+
+        // Guarda na lista de caminhos
+        novoCaminho->proximo = *listaCaminhos;
+        *listaCaminhos = novoCaminho;
     }
     else
     {
-        // Percorrer a lista de adjacências
+        // Percorrer as adjacências
         Adjacente *a = atual->next;
         while (a != NULL)
         {
             Vertice *v = ProcurarVertice(grafo->inicio, a->l, a->c);
-            if (v != NULL && v->visitado == false && v->f == atual->f)
+            if (v && !v->visitado && v->f == atual->f)
             {
-                ListarCaminhosRec(grafo, v, destino, caminho, nivel);
+                ProcurarTodosCaminhos(grafo, v, destino, caminhoAtual, listaCaminhos);
             }
-            if (a->next != NULL)
-                a = a->next;
-            else
-                break;
+            a = a->next;
         }
     }
 
@@ -691,30 +873,44 @@ bool ListarCaminhosRec(GR *grafo, Vertice *atual, Vertice *destino, Vertice *cam
 }
 
 /**
- * @brief Função para listar todos os caminhos possíveis entre duas antenas
+ * @brief Função para procurar todas as intersecções de pares de antenas com ressonância distintas
  *
  * @param grafo
- * @param origem
- * @param destino
- * @return true
- * @return false
+ * @param f1 frequência de uma antena
+ * @param f2 frequência de outra antena
+ * @return Adjacente*
  */
-bool ListarTodosCaminhos(GR *grafo, Vertice *origem, Vertice *destino)
+Adjacente *Intersecoes(GR *grafo, char f1, char f2)
 {
 
-    if (grafo == NULL || origem == NULL || destino == NULL)
-        return false;
+    if (grafo == NULL)
+        return NULL;
 
-    // Inicializar todos como false
-    Vertice *aux = origem->proximo;
-    while (aux->proximo != NULL)
+    Adjacente *ListaInterseta = NULL;
+
+    Vertice *v1 = grafo->inicio;
+
+    while (v1 != NULL)
     {
-        aux->visitado = false;
-        aux = aux->proximo;
+        if (v1->f == f1)
+        {
+            Vertice *v2 = grafo->inicio;
+            while (v2 != NULL)
+            {
+                if (v2->f == f2 &&
+                    v2->l == v1->l &&
+                    v2->c == v1->c)
+                {
+
+                    Adjacente *novo = CriarAdjacencia(v1->l, v1->c);
+                    novo->next = ListaInterseta;
+                    ListaInterseta = novo;
+                }
+                v2 = v2->proximo;
+            }
+        }
+        v1 = v1->proximo;
     }
 
-    Vertice *caminho[grafo->numVertices];
-    bool ok = ListarCaminhosRec(grafo, origem, destino, caminho, 0);
-
-    return true;
+    return ListaInterseta;
 }
