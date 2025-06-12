@@ -9,47 +9,45 @@
  * 
  */
 
-
 #include "../include/nefasto.h"
 
 /**
  * @brief Função que calcula as coordenadas do efeito nefasto quando duas antenas estão alinhadas na horizontal
- * 
+ *
  * @param InicioNefasto Lista dos efeitos nefastos
  * @param a1 antena 1
  * @param a2 antena 2
  * @param matriz Dimensões da matriz
- * @return Elemento* 
+ * @return Elemento*
  */
-Elemento* CalcularHorizontal(Elemento *InicioNefasto, Elemento *a1, Elemento *a2, Tamanho *matriz) {
+Elemento *CalcularHorizontal(Elemento *InicioNefasto, Elemento *a1, Elemento *a2, Tamanho *matriz)
+{
 
-    //Calcular a distância
+    // Calcular a distância
     int d = a2->c - a1->c;
 
-    //Coordenadas do efeito nefasto 1
+    // Coordenadas do efeito nefasto 1
     int LinhaNefasto = a1->l;
     int ColunaNefasto = a1->c - d;
 
     Elemento *EfeitoNefasto;
 
-    //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
-    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
-    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    // Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
+    if (LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0)
     {
-        EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
-        InicioNefasto = InsereOrdenado(InicioNefasto,EfeitoNefasto);
+        EfeitoNefasto = CriaElemento('#', LinhaNefasto, ColunaNefasto);
+        InicioNefasto = InsereOrdenado(InicioNefasto, EfeitoNefasto);
     }
 
-    //Coordenadas do efeito nefasto 2
+    // Coordenadas do efeito nefasto 2
     LinhaNefasto = a2->l;
     ColunaNefasto = a2->c + d;
 
-    //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
-    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
-    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    // Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
+    if (LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0)
     {
-        EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
-        InicioNefasto = InsereOrdenado(InicioNefasto,EfeitoNefasto);
+        EfeitoNefasto = CriaElemento('#', LinhaNefasto, ColunaNefasto);
+        InicioNefasto = InsereOrdenado(InicioNefasto, EfeitoNefasto);
     }
 
     return InicioNefasto;
@@ -57,44 +55,43 @@ Elemento* CalcularHorizontal(Elemento *InicioNefasto, Elemento *a1, Elemento *a2
 
 /**
  * @brief Função que calcula as coordenadas do efeito nefasto quando duas antenas estão alinhadas na vertical
- * 
+ *
  * @param InicioNefasto Lista dos efeitos nefastos
  * @param a1 antena 1
  * @param a2 antena 2
  * @param matriz Dimensões da matriz
- * @return Elemento* 
+ * @return Elemento*
  */
-Elemento* CalcularVertical(Elemento *InicioNefasto, Elemento *a1, Elemento *a2, Tamanho *matriz) {
+Elemento *CalcularVertical(Elemento *InicioNefasto, Elemento *a1, Elemento *a2, Tamanho *matriz)
+{
 
-    //Calcular a distância
+    // Calcular a distância
     int d = a2->l - a1->l;
 
-    //Coordenadas do efeito nefasto 1
+    // Coordenadas do efeito nefasto 1
     int LinhaNefasto = a1->l - d;
     int ColunaNefasto = a1->c;
 
     Elemento *EfeitoNefasto;
 
-    //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
-    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
-    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    // Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
+    if (LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0)
     {
-        EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
-        InicioNefasto = InsereOrdenado(InicioNefasto,EfeitoNefasto);
-        //printf("Nefasto 1: (%d,%d)\n",LinhaNefasto,ColunaNefasto);
+        EfeitoNefasto = CriaElemento('#', LinhaNefasto, ColunaNefasto);
+        InicioNefasto = InsereOrdenado(InicioNefasto, EfeitoNefasto);
+        // printf("Nefasto 1: (%d,%d)\n",LinhaNefasto,ColunaNefasto);
     }
 
-    //Coordenadas do efeito nefasto 2
+    // Coordenadas do efeito nefasto 2
     LinhaNefasto = a2->l + d;
     ColunaNefasto = a2->c;
 
-    //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
-    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
-    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    // Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
+    if (LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0)
     {
-        EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
-        InicioNefasto = InsereOrdenado(InicioNefasto,EfeitoNefasto);
-        //printf("Nefasto 2: (%d,%d)\n",LinhaNefasto,ColunaNefasto);
+        EfeitoNefasto = CriaElemento('#', LinhaNefasto, ColunaNefasto);
+        InicioNefasto = InsereOrdenado(InicioNefasto, EfeitoNefasto);
+        // printf("Nefasto 2: (%d,%d)\n",LinhaNefasto,ColunaNefasto);
     }
 
     return InicioNefasto;
@@ -102,54 +99,58 @@ Elemento* CalcularVertical(Elemento *InicioNefasto, Elemento *a1, Elemento *a2, 
 
 /**
  * @brief Função que calcula efeito nefasto
- * 
+ *
  * @param InicioAntena Lista das antenas
  * @param InicioNefasto Lista dos efeitos nefastos
  * @param matriz Dimensões da matri<
- * @return Elemento* 
+ * @return Elemento*
  */
-Elemento* CalculoNefasto(Elemento *InicioAntena, Elemento *InicioNefasto, Tamanho* matriz) {
+Elemento *CalculoNefasto(Elemento *InicioAntena, Elemento *InicioNefasto, Tamanho *matriz)
+{
 
-    //Verificar se a lista das antenas estiver vazia
-    if(InicioAntena == NULL) return InicioNefasto;
+    // Verificar se a lista das antenas estiver vazia
+    if (InicioAntena == NULL)
+        return InicioNefasto;
 
-    //auxiliares
+    // auxiliares
     Elemento *atual = InicioAntena;
     Elemento *anterior = atual;
 
     bool acabou = false;
 
-    while(acabou == false) {
+    while (acabou == false)
+    {
 
-        //Verificar se já acabou a lista
-        if(anterior->p != NULL) {
+        // Verificar se já acabou a lista
+        if (anterior->p != NULL)
+        {
 
-            //Passar para a próxima posição
-            if(atual->p != NULL) 
+            // Passar para a próxima posição
+            if (atual->p != NULL)
             {
                 atual = atual->p;
-            } 
+            }
             else
             {
                 anterior = anterior->p;
                 atual = anterior;
             }
         }
-        //Caso contrário acaba
-        else acabou = true;
+        // Caso contrário acaba
+        else
+            acabou = true;
 
-        //Horizontal
-        if(anterior->l == atual->l && anterior->c != atual->c && anterior != atual && anterior->tipo == atual->tipo)
+        // Horizontal
+        if (anterior->l == atual->l && anterior->c != atual->c && anterior != atual && anterior->tipo == atual->tipo)
         {
-            InicioNefasto = CalcularHorizontal(InicioNefasto,anterior,atual,matriz);
+            InicioNefasto = CalcularHorizontal(InicioNefasto, anterior, atual, matriz);
         }
 
-        //Vertical
-        if(anterior->l != atual->l && anterior->c == atual->c && anterior != atual && anterior->tipo == atual->tipo)
+        // Vertical
+        if (anterior->l != atual->l && anterior->c == atual->c && anterior != atual && anterior->tipo == atual->tipo)
         {
-            InicioNefasto = CalcularVertical(InicioNefasto,anterior,atual,matriz);
+            InicioNefasto = CalcularVertical(InicioNefasto, anterior, atual, matriz);
         }
-
     }
     return InicioNefasto;
 }
@@ -168,8 +169,8 @@ Elemento* CalcularDiagonal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho
     Elemento *EfeitoNefasto;
 
     //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
-    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
-    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0
+    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0)
     {
         EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
         inicio = InsereOrdenado(inicio,EfeitoNefasto);
@@ -181,8 +182,8 @@ Elemento* CalcularDiagonal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho
     ColunaNefasto = a2->c + d;
 
     //Verificar se as coordenadas do efeito nefasto estão dentro dos limites da matriz
-    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0 
-    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0) 
+    if(LinhaNefasto < matriz->nLinhas && LinhaNefasto >= 0
+    && ColunaNefasto < matriz->nColunas && ColunaNefasto >= 0)
     {
         EfeitoNefasto = CriaElemento('#',LinhaNefasto,ColunaNefasto);
         inicio = InsereOrdenado(inicio,EfeitoNefasto);

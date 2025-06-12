@@ -15,6 +15,12 @@
 int main()
 {
 
+    Vertice *a1 = NULL;
+    Vertice *a2 = NULL;
+
+    Caminho *lista = NULL;
+    Adjacente *listaAdj = NULL;
+
     /*
 #pragma region Declarar variaveis
     //Criar uma lista para as antenas
@@ -166,7 +172,16 @@ int main()
     matriz->nLinhas = 0;
     matriz->nColunas = 0;
     GR *grafo = LerGrafosFileTexto("grafo.txt", matriz);
+    a1 = ProcurarVertice(grafo->inicio, 0, 1);
+    a2 = ProcurarVertice(grafo->inicio, 2, 1);
+
+    // Vertice* a = ProcurarVertice(NULL,1,1);
+    // grafo->inicio = RemoverVertice(a,grafo->inicio);
+    // printf("%d",ProcurarVertice(grafo->inicio,1,3) == NULL);
+
     // GravarGrafoFileTexto("grafo.txt",grafo,matriz);
-    // Caminho* lista = Procurar(grafo,a2,a4,lista);
+    lista = ProcurarTodosCaminhos(grafo, a1, a2, NULL, lista);
+    listaAdj = ProcuraEmProfundidade(grafo, a1);
+
     return 0;
 }

@@ -23,22 +23,22 @@ Elemento *ProcurarElemento(Elemento *inicio, int l, int c);
 
 Elemento *RemoverElemento(Elemento *inicio, int l, int c);
 
-bool ListarMatriz(Elemento *inicio, Tamanho* matriz);
+bool ListarMatriz(Elemento *inicio, Tamanho *matriz);
 
-bool GravarElementoFicheiro(char* nomeFicheiro, Elemento* inicio, Tamanho* matriz);
+bool GravarElementoFicheiro(char *nomeFicheiro, Elemento *inicio, Tamanho *matriz);
 
-Elemento *LerElementosFicheiro(char* nomeFicheiro, Tamanho* matriz);
+Elemento *LerElementosFicheiro(char *nomeFicheiro, Tamanho *matriz);
 
-Elemento* CalcularHorizontal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
+Elemento *CalcularHorizontal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
 
-Elemento* CalcularVertical(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
+Elemento *CalcularVertical(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
 
-Elemento* CalcularDiagonal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
+Elemento *CalcularDiagonal(Elemento *inicio, Elemento *a1, Elemento *a2, Tamanho *matriz);
 
-Elemento *CalcularEfeitoNefasto(Elemento *inicio, Tamanho* matriz);
+Elemento *CalcularEfeitoNefasto(Elemento *inicio, Tamanho *matriz);
 
-bool GravarBinario(char* nomeFicheiro, Elemento* inicio);
+bool GravarBinario(char *nomeFicheiro, Elemento *inicio);
 
-Elemento *LerBinario(char* nomeFicheiro);
+Elemento *LerBinario(char *nomeFicheiro);
 
 Elemento *DestroiLista(Elemento *inicio);

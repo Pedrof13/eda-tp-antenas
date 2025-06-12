@@ -11,6 +11,6 @@
 
 #include "funcoes.h"
 
-Elemento* CalcularHorizontal(Elemento *InicioNefasto, Elemento *a1, Elemento *a2, Tamanho *matriz);
-Elemento* CalcularVertical(Elemento *InicioNefasto, Elemento *a1, Elemento *a2, Tamanho *matriz);
-Elemento* CalculoNefasto(Elemento *InicioAntena, Elemento *InicioNefasto, Tamanho* matriz);
+Elemento *CalcularHorizontal(Elemento *InicioNefasto, Elemento *a1, Elemento *a2, Tamanho *matriz);
+Elemento *CalcularVertical(Elemento *InicioNefasto, Elemento *a1, Elemento *a2, Tamanho *matriz);
+Elemento *CalculoNefasto(Elemento *InicioAntena, Elemento *InicioNefasto, Tamanho *matriz);
