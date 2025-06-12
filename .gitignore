@@ -1,5 +1,13 @@
 .vscode
-src/funcoes.o
-src/nefasto.o
-src/grafo.o
-src/prog.exe
+
+# Documentação
+docs/doxygen/html
+docs/doxygen/latex
+docs/relatorio/
+docs/relatorio/
+
+# Executáveis
+*.exe
+
+# Ficheiros objeto
+*.o
