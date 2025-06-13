@@ -202,7 +202,7 @@ Vertice* ProcurarVertice(Vertice* inicio, int l, int c) {
  */
 Vertice* InserirVertice(Vertice* novo, Vertice* inicio, int* res) {
 
-    res = 0;
+    *res = 0;
 
     //Verificar se já existe um Vertice com as mesmas coordenadas
     if(ProcurarVertice(inicio,novo->l,novo->c) != NULL) 
@@ -216,7 +216,7 @@ Vertice* InserirVertice(Vertice* novo, Vertice* inicio, int* res) {
     {
         novo->proximo = inicio;
         inicio = novo;
-        res = 1;
+        *res = 1;
         return inicio;
     }
 
@@ -249,7 +249,7 @@ Vertice* InserirVertice(Vertice* novo, Vertice* inicio, int* res) {
         novo->proximo = atual;
     }
 
-    res = 1;
+    *res = 1;
     return inicio;
 }
 
@@ -262,7 +262,7 @@ Vertice* InserirVertice(Vertice* novo, Vertice* inicio, int* res) {
  */
 Vertice* RemoverVertice(Vertice* v, Vertice* inicio, int* res) {
     
-    res = 0;
+    *res = 0;
     //Verificar se a lista está vaiza ou se o vertice a ser removido não existe na lista
     if(inicio == NULL || ProcurarVertice(inicio,v->l,v->c) == NULL) return inicio;
 
@@ -289,7 +289,7 @@ Vertice* RemoverVertice(Vertice* v, Vertice* inicio, int* res) {
 
         inicio = inicio->proximo;
         free(aux);
-        res = 1;
+        *res = 1;
         return inicio;
     }
     else
@@ -323,7 +323,7 @@ Vertice* RemoverVertice(Vertice* v, Vertice* inicio, int* res) {
             anterior->proximo = atual->proximo;
             free(atual);
         }
-        res = 1;
+        *res = 1;
         return inicio;
     }
     
@@ -533,7 +533,7 @@ GR* LerGrafosFileTexto(char* nomeFicheiro, Tamanho* matriz) {
             if(c != '.' && c != '\n' && c != -1) {
                 aux = CriarVertice(c,matriz->nLinhas,auxColunas);
                 inicio = InserirVertice(aux,inicio,res);
-                if(res==1)nVertice++;
+                if(*res==1)nVertice++;
             }
             if (c == '\n') {
                 matriz->nLinhas++;
