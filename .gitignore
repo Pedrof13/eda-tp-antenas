@@ -11,3 +11,6 @@ docs/relatorio/
 
 # Ficheiros objeto
 *.o
+
+# Bibliotecas
+*.a

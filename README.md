@@ -17,10 +17,18 @@ eda-tp-antenas/
 └── README.md   # Documentação do projeto
 ```
 
-## Execução
+## Comandos
+A partir da raiz do projeto pode executar os seguintes comandos:
 
+### Execução do programa
 ```bash
 make
+```
+
+### Gerar documentação doxygen
+```bash
+cd docs/doxygen
+doxygen doxyfile
 ```
 
 ## Autor

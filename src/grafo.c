@@ -715,7 +715,9 @@ Adjacente* ProcuraEmLargura(GR* grafo, Vertice* origem) {
     //lista para guardar as coordenadas dos caminhos percorridos
     Adjacente* lista = NULL;
 
-    Vertice* fila[grafo->numVertices];
+    //Vertice* fila[grafo->numVertices];
+    Vertice** fila = (Vertice**)malloc(grafo->numVertices * sizeof(Vertice*));
+    if (fila == NULL) return NULL; // Handle allocation failure
     int frente=0, tras=0;
 
     //Marcar como visitado e inserir na fila
@@ -744,6 +746,7 @@ Adjacente* ProcuraEmLargura(GR* grafo, Vertice* origem) {
         }
     }
 
+    free(fila);
     return lista;
 }
 
