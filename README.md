@@ -1,4 +1,4 @@
-# Trabalho prático EDA
+# Trabalho Prático EDA - Antenas
 Este projeto foi desenvolvido no âmbito da unidade curricular Estruturas de Dados Avançadas no ano letivo 2024/2025,
 com objetivo de sedimentar os conhecimentos relativos à definição e manipulação de estruturas de dados dinâmicas e também a grafos na linguagem de programação C.
 
